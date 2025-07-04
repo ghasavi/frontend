@@ -7,7 +7,7 @@ export default function Header() {
         <div className="bg-red-500 text-white p-4">
             <Link to="/">Home</Link>
             <Link to="/login">Login</Link>
-            <Link to="/signup">Signup</Link>
+            <Link to="/register">Register</Link>
         </div>
     )
 }
