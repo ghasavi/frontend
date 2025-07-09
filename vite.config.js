@@ -7,6 +7,6 @@ import tailwindcss from '@tailwindcss/vite'
 export default defineConfig({
   plugins: [react(),tailwindcss()],
    server: {
-    historyApiFallback: true, // 💥 this line is the fix
-  },
+    historyApiFallback: true, 
+   },
 })

@@ -1,8 +1,35 @@
+import { Route, Routes } from "react-router-dom";
+import Header from "../components/header";
+import ProductPage from "./client/productPage";
+import ProductOverviewPage from "./client/productOverview";
+import CartPage from "./client/cart";
+import CheckoutPage from "./client/checkOut";
+import SearchProductPage from "./client/searchProducts";
+
 export default function HomePage() {
-    return (
-        <div className="flex items-center justify-center h-screen bg-gray-100">
-            <h1 className="text-3xl font-bold text-gray-800">Home Page</h1>
-            <p className="mt-4 text-gray-600">Welcome to the home page!</p>
-        </div>
-    );
+	return (
+		<div className="w-full h-screen  flex flex-col items-center">
+			<Header />
+			<div className="w-full h-[calc(100vh-80px)]  flex flex-col items-center">
+				<Routes path="/*">
+					<Route
+						path="/"
+						element={
+							<>
+								
+							</>
+						}
+					/>
+					<Route path="/products" element={<ProductPage />} />
+					<Route path="/about" element={<h1>About</h1>} />
+					<Route path="/contact" element={<h1>Contact</h1>} />
+					<Route path="/cart" element={<CartPage />} />
+					<Route path="/checkout" element={<CheckoutPage />} />
+					<Route path="/search" element={<SearchProductPage />} />
+					<Route path="/overview/:id" element={<ProductOverviewPage />} />
+					<Route path="/*" element={<h1>404 Not Found</h1>} />
+				</Routes>
+			</div>
+		</div>
+	);
 }

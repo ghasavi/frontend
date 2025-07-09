@@ -1,11 +1,12 @@
-import {useState} from 'react';
 
-export default function TestPage() {
 
-  return (
-    <div>
-      <h1>Test Page</h1>
-      <p>This is a test page.</p>
-    </div>
-  );
+export default function TestPage(){
+
+    
+
+    return(
+        <div className="w-full h-screen  flex justify-center items-center flex-col bg-red-900 md:bg-blue-900">
+                      
+        </div>
+    )
 }

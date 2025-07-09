@@ -1,92 +1,99 @@
-import axios from 'axios';
-import { useState } from 'react';
-import toast from 'react-hot-toast';
-import { useNavigate } from 'react-router-dom';
+import { useGoogleLogin } from "@react-oauth/google"
+import axios from "axios"
+import { useState } from "react"
+import toast from "react-hot-toast"
+import { GrGoogle } from "react-icons/gr"
+import { useNavigate } from "react-router-dom"
 
-export default function LoginPage() {
-  const [email, setEmail] = useState('');
-  const [password, setPassword] = useState('');
-  const navigate = useNavigate()
+export default function LoginPage(){
 
-  async function handleLogin(e) {
-    e.preventDefault(); // prevent default form refresh
-    console.log(email);
-    console.log(password);
+    const [email,setEmail] = useState("")
+    const [password,setPassword] = useState("")
+    const navigate = useNavigate()
 
-    try {
-      const response = await axios.post(import.meta.env.VITE_BACKEND_URL+"/api/users/login", {
-        email: email,
-        password: password,
-      });
-      toast.success('Login successful');
-      console.log(response.data);
-      localStorage.setItem('token', response.data.token); 
+    const googleLogin  = useGoogleLogin({
+        onSuccess: (response)=>{
+            const accessToken = response.access_token
+            axios.post(import.meta.env.VITE_BACKEND_URL+"/api/users/login/google", {
+                accessToken: accessToken
+            }).then((response)=>{
+                toast.success("Login Successful")
+                const token = response.data.token
+                localStorage.setItem("token", token)
+                if(response.data.role === "admin"){
+                    navigate("/admin/")
+                }
+                else{
+                    navigate("/")
+                }
+            })
+        }
+    })
 
-      if(response.data.role === "admin"){
-              navigate("/admin"); 
-      }else{
-        navigate("/")
-      }
+
+    async function handleLogin(){
+        try{
+            const response = await axios.post(import.meta.env.VITE_BACKEND_URL+"/api/users/login" , {
+                email:email,
+                password:password
+            })
+            //alert("Login Successful")
+            toast.success("Login Successful")
+            console.log(response.data)
+            localStorage.setItem("token",response.data.token)
+
+            if(response.data.role === "admin"){
+                navigate("/admin/")
+            }else{
+                navigate("/")
+            }
+
+            
+        }catch(e){
+            //alert(e.response.data.message)
+            toast.error(e.response.data.message)
+        }
+        
 
 
-    } catch (e) {
-      toast.error(e?.response?.data?.message || 'Login failed');
+
     }
-  }
 
-  return (
-    <div className="flex items-center justify-center h-screen bg-gray-100">
-      <form
-        onSubmit={handleLogin}
-        className="mt-6 w-96 bg-white p-8 rounded-lg shadow-md"
-      >
-        <h1 className="text-3xl font-bold text-gray-800 mb-6 text-center">
-          Login Page
-        </h1>
+    return(
+        <div className="w-full h-screen bg-[url('/login.jpg')] bg-center bg-cover flex  justify-evenly items-center">
+          <div className="w-[50%] h-full ">
 
-        <div className="mb-4">
-          <label
-            className="block text-sm font-medium text-gray-700"
-            htmlFor="email"
-          >
-            Email
-          </label>
-          <input
-            type="email"
-            id="email"
-            value={email}
-            onChange={(e) => setEmail(e.target.value)}
-            className="mt-1 block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-blue-500 focus:border-blue-500 sm:text-sm"
-            placeholder="Enter your email"
-            required
-          />
+          </div>
+          <div className="w-[50%] h-full flex justify-center items-center">
+
+            <div className="w-[500px] h-[600px] backdrop-blur-md rounded-[20px] shadow-xl flex flex-col justify-center items-center">
+                <input 
+                
+                    onChange={
+                        (e)=>{
+                            setEmail(e.target.value)                        
+                        }
+                    }
+
+                    value={email}
+                
+                className="w-[300px] h-[50px] border border-[#c3efe9] rounded-[20px] my-[20px]" />
+                <input 
+                    onChange={
+                        (e)=>{
+                            setPassword(e.target.value)                        
+                        }
+                    }
+                    value={password}
+                type="password" className="w-[300px] h-[50px] border border-[#c3efe9] rounded-[20px] mb-[20px]" />
+                <button onClick={handleLogin}  className="w-[300px] cursor-pointer h-[50px] bg-[#c3efe9] rounded-[20px] my-[20px] text-[20px] font-bold text-white">Login</button>
+                <button onClick={googleLogin} className="w-[300px] cursor-pointer h-[50px] flex justify-center items-center bg-[#c3efe9] rounded-[20px] my-[20px] text-[20px] font-bold text-white" >
+                    <GrGoogle className="text-xl text-gray-600 cursor-pointer hover:text-gray-800" />
+                    <span className="text-gray-600 text-xl font-semibold">Login with Google</span>
+                </button>
+            </div>
+
+          </div>
         </div>
-
-        <div className="mb-6">
-          <label
-            className="block text-sm font-medium text-gray-700"
-            htmlFor="password"
-          >
-            Password
-          </label>
-          <input
-            type="password"
-            id="password"
-            value={password}
-            onChange={(e) => setPassword(e.target.value)}
-            className="mt-1 block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-blue-500 focus:border-blue-500 sm:text-sm"
-            placeholder="Enter your password"
-            required
-          />
-        </div>
-
-        <button
-          type="submit"
-          className="w-full bg-blue-500 text-white py-2 px-4 rounded-md hover:bg-blue-600 transition duration-300"
-        >
-          Login
-        </button>
-      </form>
-    </div>
-  );
+    )
 }
