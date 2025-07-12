@@ -16,6 +16,7 @@ export default function AdminProductsPage() {
 			axios
 				.get(import.meta.env.VITE_BACKEND_URL + "/api/products")
 				.then((res) => {
+					console.log("Product response from backend", res.data);
 					setProducts(res.data);
 					setIsLoading(false);
 				})
