@@ -81,80 +81,82 @@ export default function EditProductPage() {
 	}
 
 	return (
-		<div className="w-full h-full flex flex-col justify-center items-center">
-			<h1 className="text-3xl font-bold mb-4">Edit Product</h1>
-			<input
-				type="text"
-				disabled
-				placeholder="Product ID"
-				className="input input-bordered w-full max-w-xs"
-				value={productId}
-				onChange={(e) => setProductId(e.target.value)}
-			/>
-			<input
-				type="text"
-				placeholder="Name"
-				className="input input-bordered w-full max-w-xs"
-				value={name}
-				onChange={(e) => setName(e.target.value)}
-			/>
-			<input
-				type="text"
-				placeholder="Alt Names"
-				className="input input-bordered w-full max-w-xs"
-				value={altNames}
-				onChange={(e) => setAltNames(e.target.value)}
-			/>
-			<input
-				type="text"
-				placeholder="Description"
-				className="input input-bordered w-full max-w-xs"
-				value={description}
-				onChange={(e) => setDescription(e.target.value)}
-			/>
-			<input
-				type="file"
-				placeholder="Images"
-				multiple
-				className="input input-bordered w-full max-w-xs"
-				onChange={(e) => setImages(e.target.files)}
-			/>
-			<input
-				type="number"
-				placeholder="Labelled Price"
-				className="input input-bordered w-full max-w-xs"
-				value={labelledPrice}
-				onChange={(e) => setLabelledPrice(e.target.value)}
-			/>
-			<input
-				type="number"
-				placeholder="Price"
-				className="input input-bordered w-full max-w-xs"
-				value={price}
-				onChange={(e) => setPrice(e.target.value)}
-			/>
-			<input
-				type="number"
-				placeholder="Stock"
-				className="input input-bordered w-full max-w-xs"
-				value={stock}
-				onChange={(e) => setStock(e.target.value)}
-			/>
+		<div className="w-full min-h-screen flex flex-col justify-center items-center bg-[#f5f3ef] text-[#4e342e] p-6">
+	<h1 className="text-4xl font-extrabold mb-6 text-[#3e2723]">Edit Product</h1>
 
-			<div className="w-full flex justify-center flex-row items-center mt-4">
-				<Link
-					to="/admin/products"
-					className="bg-red-500 text-white font-bold py-2 px-4 rounded mr-4"
-				>
-					Cancel
-				</Link>
-				<button
-					className="bg-green-500 text-white font-bold py-2 px-4 rounded"
-					onClick={updateProduct}
-				>
-					Update Product
-				</button>
-			</div>
-		</div>
+	<input
+		type="text"
+		disabled
+		placeholder="Product ID"
+		className="input input-bordered w-full max-w-xs mb-3 bg-[#d7ccc8] border-[#8d6e63] placeholder-[#5d4037] text-[#4e342e]"
+		value={productId}
+		onChange={(e) => setProductId(e.target.value)}
+	/>
+	<input
+		type="text"
+		placeholder="Name"
+		className="input input-bordered w-full max-w-xs mb-3 bg-[#efebe9] border-[#8d6e63] placeholder-[#5d4037] text-[#4e342e]"
+		value={name}
+		onChange={(e) => setName(e.target.value)}
+	/>
+	<input
+		type="text"
+		placeholder="Alt Names"
+		className="input input-bordered w-full max-w-xs mb-3 bg-[#efebe9] border-[#8d6e63] placeholder-[#5d4037] text-[#4e342e]"
+		value={altNames}
+		onChange={(e) => setAltNames(e.target.value)}
+	/>
+	<input
+		type="text"
+		placeholder="Description"
+		className="input input-bordered w-full max-w-xs mb-3 bg-[#efebe9] border-[#8d6e63] placeholder-[#5d4037] text-[#4e342e]"
+		value={description}
+		onChange={(e) => setDescription(e.target.value)}
+	/>
+	<input
+		type="file"
+		placeholder="Images"
+		multiple
+		className="input input-bordered w-full max-w-xs mb-3 bg-[#efebe9] border-[#8d6e63] text-[#4e342e]"
+		onChange={(e) => setImages(e.target.files)}
+	/>
+	<input
+		type="number"
+		placeholder="Labelled Price"
+		className="input input-bordered w-full max-w-xs mb-3 bg-[#efebe9] border-[#8d6e63] placeholder-[#5d4037] text-[#4e342e]"
+		value={labelledPrice}
+		onChange={(e) => setLabelledPrice(e.target.value)}
+	/>
+	<input
+		type="number"
+		placeholder="Price"
+		className="input input-bordered w-full max-w-xs mb-3 bg-[#efebe9] border-[#8d6e63] placeholder-[#5d4037] text-[#4e342e]"
+		value={price}
+		onChange={(e) => setPrice(e.target.value)}
+	/>
+	<input
+		type="number"
+		placeholder="Stock"
+		className="input input-bordered w-full max-w-xs mb-3 bg-[#efebe9] border-[#8d6e63] placeholder-[#5d4037] text-[#4e342e]"
+		value={stock}
+		onChange={(e) => setStock(e.target.value)}
+	/>
+
+	<div className="w-full flex justify-center flex-row items-center mt-6">
+		<Link
+			to="/admin/products"
+			className="bg-[#8d6e63] hover:bg-[#6d4c41] text-white font-bold py-2 px-5 rounded mr-4 transition-all duration-200"
+		>
+			Cancel
+		</Link>
+		<button
+			className="bg-[#6d4c41] hover:bg-[#4e342e] text-white font-bold py-2 px-5 rounded transition-all duration-200"
+			onClick={updateProduct}
+		>
+			Update Product
+		</button>
+	</div>
+</div>
+
 	);
 }

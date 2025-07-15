@@ -5,6 +5,7 @@ import toast from "react-hot-toast"
 import { GrGoogle } from "react-icons/gr"
 import { useNavigate } from "react-router-dom"
 
+
 export default function LoginPage(){
 
     const [email,setEmail] = useState("")
@@ -91,6 +92,12 @@ export default function LoginPage(){
                     <GrGoogle className="text-xl text-gray-600 cursor-pointer hover:text-gray-800" />
                     <span className="text-gray-600 text-xl font-semibold">Login with Google</span>
                 </button>
+                <button 
+  onClick={() => navigate("/register")} 
+  className="w-[300px] cursor-pointer h-[50px] bg-transparent border border-[#c3efe9] rounded-[20px] my-[10px] text-[18px] font-semibold text-[#c3efe9] hover:bg-[#c3efe9] hover:text-white transition duration-200"
+>
+  Create an account
+</button>
             </div>
 
           </div>

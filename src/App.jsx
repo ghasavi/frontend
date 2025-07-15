@@ -15,7 +15,7 @@ function App() {
  
 
   return (
-    <GoogleOAuthProvider clientId="37337765557-5qck0erqtvg70n7fuldt6t82ovtvgrfo.apps.googleusercontent.com">
+    <GoogleOAuthProvider clientId="748023442531-0foobb1veeh83cgmdd1g7s0gjh9mq7db.apps.googleusercontent.com">
     <BrowserRouter>
       <div >
         <Toaster position='top-right'/>
@@ -23,7 +23,7 @@ function App() {
         <Routes path="/*">
           <Route path='/login' element={<LoginPage/>}/>
           <Route path="/forget" element={<ForgetPasswordPage/>}/>
-          <Route path="/signup" element={<RegisterPage/>}/>
+          <Route path="/register" element={<RegisterPage/>}/>
           <Route path="/testing" element={<TestPage/>}/>
           <Route path='/admin/*' element={<AdminPage/>}/>
           <Route path='/*' element={<HomePage/>}/>

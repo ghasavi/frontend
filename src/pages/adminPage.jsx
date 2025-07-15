@@ -8,6 +8,7 @@ import axios from "axios";
 import toast from "react-hot-toast";
 import Loading from "../components/loading";
 
+
 export default function AdminPage() {
 	const location = useLocation();
 	const path = location.pathname;
@@ -53,6 +54,7 @@ export default function AdminPage() {
 
 	return (
 		<div className="w-full h-screen  flex bg-accent">
+			
 			{status == "loading"||status == "unauthenticated"?
                 <Loading/>:
 				<>

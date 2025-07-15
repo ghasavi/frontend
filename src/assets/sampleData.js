@@ -3,7 +3,7 @@ export const sampleProducts = [
         "_id": "6861508593c61885e40869e5",
         "productId": "COSM24001",
         "name": "Hydrating Face Serum",
-        "altName": [
+        "altNames": [
             "Moisture Booster",
             "Hydra Glow Serum"
         ],
@@ -21,7 +21,7 @@ export const sampleProducts = [
         "_id": "6861509493c61885e40869e7",
         "productId": "COSM24002",
         "name": "Charcoal Peel-Off Mask",
-        "altName": [
+        "altNames": [
             "Detox Mask",
             "Blackhead Remover"
         ],
@@ -38,7 +38,7 @@ export const sampleProducts = [
         "_id": "686150a393c61885e40869e9",
         "productId": "COSM24003",
         "name": "Vitamin C Brightening Cream",
-        "altName": [
+        "altNames": [
             "Glow Cream",
             "Radiance Booster"
         ],
@@ -55,7 +55,7 @@ export const sampleProducts = [
         "_id": "686150af93c61885e40869eb",
         "productId": "COSM24004",
         "name": "Matte Lipstick - Rose Red",
-        "altName": [
+        "altNames": [
             "Crimson Rose",
             "Classic Red"
         ],

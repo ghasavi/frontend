@@ -10,3 +10,6 @@ export default defineConfig({
     historyApiFallback: true, 
    },
 })
+
+//748023442531-0foobb1veeh83cgmdd1g7s0gjh9mq7db.apps.googleusercontent.com
+//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
