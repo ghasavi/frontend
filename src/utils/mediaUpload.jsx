@@ -1,38 +1,33 @@
-import { createClient } from "@supabase/supabase-js"
+import { createClient } from "@supabase/supabase-js";
 
-const url = "https://zvhnqhsakoxjziurenya.supabase.co"
-const key = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Inp2aG5xaHNha294anppdXJlbnlhIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NTE3MjA3MTYsImV4cCI6MjA2NzI5NjcxNn0.OD7F8_bKVHaODAAkWsuvoZWIxOESPYDfS313-JQzzhI"
+const supabaseUrl = import.meta.env.VITE_SUPABASE_URL;
+const supabaseAnonKey = import.meta.env.VITE_SUPABASE_ANON_KEY;
 
-const supabase = createClient(url,key)
+const supabase = createClient(supabaseUrl, supabaseAnonKey);
 
-export default function mediaUpload(file){
+export default async function mediaUpload(file) {
+  if (!file) {
+    throw new Error("No file selected");
+  }
 
-    const mediaUploadPromise = new Promise(
-        (resolve, reject)=>{
+  const fileExt = file.name.split(".").pop();
+  const fileName = `${Date.now()}.${fileExt}`;
 
-            if(file == null){
-                reject("No file selected")
-                return
-            }
+  const { error } = await supabase.storage
+    .from("images")
+    .upload(fileName, file, {
+      cacheControl: "3600",
+      upsert: false,
+    });
 
-            const timestamp = new Date().getTime()
-            const newName = timestamp+file.name
+  if (error) {
+    console.error(error);
+    throw new Error("Error occurred while uploading image");
+  }
 
-            supabase.storage.from("aviimages").upload(newName, file, {
-                upsert:false,
-                cacheControl:"3600"
-            }).then(()=>{
-                const publicUrl = supabase.storage.from("aviimages").getPublicUrl(newName).data.publicUrl
-                resolve(publicUrl)
-            }).catch(
-                ()=>{
-                    reject("Error occured in supabase connection")
-                }
-            )
-        }
-    )
+  const { data } = supabase.storage
+    .from("images")
+    .getPublicUrl(fileName);
 
-    return mediaUploadPromise
-
+  return data.publicUrl;
 }
-//https://zvhnqhsakoxjziurenya.supabase.co

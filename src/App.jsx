@@ -35,5 +35,3 @@ function App() {
 }
 
 export default App
-//https://zvhnqhsakoxjziurenya.supabase.co
-//eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Inp2aG5xaHNha294anppdXJlbnlhIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NTE3MjA3MTYsImV4cCI6MjA2NzI5NjcxNn0.OD7F8_bKVHaODAAkWsuvoZWIxOESPYDfS313-JQzzhI
