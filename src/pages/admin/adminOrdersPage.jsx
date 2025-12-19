@@ -157,6 +157,7 @@ export default function AdminOrdersPage() {
 											<th className="py-2 px-2">Price</th>
 											<th className="py-2 px-2">Quantity</th>
 											<th className="py-2 px-2">Subtotal</th>
+
 										</tr>
 									</thead>
 									<tbody>
@@ -224,6 +225,7 @@ export default function AdminOrdersPage() {
 								<th className="py-3 px-2">Total (Rs)</th>
 								<th className="py-3 px-2">Date</th>
 								<th className="py-3 px-2">Status</th>
+								<th className="py-3 px-2">Actions</th>
 							</tr>
 						</thead>
 						<tbody>
@@ -265,6 +267,48 @@ export default function AdminOrdersPage() {
 										{order.status.charAt(0).toUpperCase() +
 											order.status.slice(1)}
 									</td>
+									<td className="py-2 px-2">
+	<button
+		onClick={async (e) => {
+			e.stopPropagation(); // 🚫 prevents modal opening
+
+			const confirmDelete = window.confirm(
+				`Delete order ${order.orderId}? This cannot be undone.`
+			);
+
+			if (!confirmDelete) return;
+
+			try {
+				const token = localStorage.getItem("token");
+
+				await axios.delete(
+					import.meta.env.VITE_BACKEND_URL +
+						"/api/orders/" +
+						order.orderId,
+					{
+						headers: {
+							Authorization: "Bearer " + token,
+						},
+					}
+				);
+
+				toast.success("Order deleted");
+
+				// Remove from UI instantly (no refetch lag)
+				setOrders((prev) =>
+					prev.filter((o) => o.orderId !== order.orderId)
+				);
+			} catch (err) {
+				console.error(err);
+				toast.error("Failed to delete order");
+			}
+		}}
+		className="px-3 py-1 bg-red-600 text-white rounded hover:bg-red-700 transition"
+	>
+		Delete
+	</button>
+</td>
+
 								</tr>
 							))}
 						</tbody>

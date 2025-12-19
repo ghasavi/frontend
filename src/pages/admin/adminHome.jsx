@@ -11,6 +11,7 @@ import AddProductsPage from "./AddProducts";
 import EditProductPage from "./EditProductsPage";
 import UserPage from "./UsersPage";
 import AdminPage from "./AdminsPage";
+import AdminUsersPage from "./adminUsersPage";
 import CreateAdminPage from "./RegisterAdmin";
 import OrdersPage from "./OrdersPage";
 import DisplayOrderPage from "./DisplayOrderPage";
@@ -132,7 +133,7 @@ function AdminHome() {
               <Route path="/edit-products" element={<EditProductPage />} />
               <Route path="/reviews" element={<ProductReviews />} />
               <Route path="/manage-reviews" element={<ManageReviews />} />
-              <Route path="/users" element={<UserPage />} />
+              <Route path="/users" element={<AdminUsersPage />} />
               <Route path="/admins" element={<AdminPage />} />
               <Route path="/admins/add-admin" element={<CreateAdminPage />} />
               <Route path="*" element={<NotFoundPage />} />

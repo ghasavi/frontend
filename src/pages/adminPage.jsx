@@ -3,6 +3,8 @@ import AddProductPage from "./admin/addProductPage";
 import AdminProductsPage from "./admin/productsPage";
 import EditProductPage from "./admin/editProductPage";
 import AdminOrdersPage from "./admin/adminOrdersPage";
+import AdminUsersPage from "./admin/adminUsersPage";
+
 import { useEffect, useState } from "react";
 import axios from "axios";
 import toast from "react-hot-toast";
@@ -75,7 +77,7 @@ export default function AdminPage() {
 					<div className="h-full w-[calc(100%-300px)]  border-accent border-4 rounded-xl bg-white">
 						<Routes path="/*">
 							<Route path="/products" element={<AdminProductsPage />} />
-							<Route path="/users" element={<h1>Users</h1>} />
+							<Route path="/users" element={<AdminUsersPage />} />
 							<Route path="/orders" element={<AdminOrdersPage />} />
 							<Route path="/reviews" element={<h1>Reviews</h1>} />
 							<Route path="/add-product" element={<AddProductPage />} />
