@@ -2,34 +2,53 @@ import { Link } from "react-router-dom";
 
 export default function ProductCard({ product }) {
   return (
-    <Link to={"/overview/"+product.productId} className="w-[300px] h-[450px] bg-white shadow-lg rounded-lg m-4 overflow-hidden flex flex-col border border-gray-200 hover:shadow-xl transition-shadow duration-300">
-      {/* Image */}
-      <div className="h-[200px] w-full bg-gray-100 flex items-center justify-center">
+    <Link
+      to={"/overview/" + product.productId}
+      className="w-[300px] h-[400px] bg-white rounded-2xl shadow-md hover:shadow-2xl hover:-translate-y-2 transition-transform duration-300 m-4 overflow-hidden flex flex-col border border-gray-100"
+    >
+      {/* IMAGE */}
+      <div className="relative h-[220px] w-full bg-gray-100 flex items-center justify-center overflow-hidden">
         {product.images && product.images.length > 0 ? (
           <img
-            src={product.images[0]}
-            alt={product.name}
-            className="h-full w-full object-cover"
-          />
+  src={product.displayImage}
+  alt={product.name}
+  className="h-full w-full object-cover transform hover:scale-105 transition"
+/>
+
         ) : (
-          <span className="text-gray-400">No Image</span>
+          <span className="text-gray-400 text-sm">No Image</span>
         )}
+        {/* Stock Badge */}
+        <span
+          className={`absolute top-2 left-2 px-2 py-1 rounded-full text-xs font-semibold ${
+            product.isAvailable && product.stock > 0
+              ? "bg-green-200 text-green-800"
+              : "bg-red-200 text-red-800"
+          }`}
+        >
+          {product.isAvailable && product.stock > 0 ? "In Stock" : "Out of Stock"}
+        </span>
       </div>
 
-      {/* Product Info */}
+      {/* PRODUCT DETAILS */}
       <div className="flex-1 p-4 flex flex-col justify-between">
         <div>
-          <h2 className="text-lg font-semibold text-gray-800">{product.name}</h2>
-          <p className="text-sm text-gray-500 mt-1 h-[48px] overflow-hidden">
-            {product.description}
-          </p>
+          <h2 className="text-lg font-semibold text-gray-800 line-clamp-2">
+            {product.name}
+          </h2>
+          <p className="text-sm text-gray-500 mt-2 h-[48px] overflow-hidden text-ellipsis line-clamp-3">
+  {product.description || "No description available"}
+</p>
+
+
+          
         </div>
 
-        {/* Pricing */}
-        <div className="mt-3">
+        {/* PRICING */}
+        <div className="mt-4 flex flex-col gap-1">
           {product.labelledPrice !== product.price ? (
             <div className="flex items-center gap-2">
-              <p className="text-red-500 font-bold text-lg">
+              <p className="text-xl font-bold text-accent">
                 Rs. {product.price.toLocaleString()}
               </p>
               <p className="text-gray-400 line-through text-sm">
@@ -37,32 +56,23 @@ export default function ProductCard({ product }) {
               </p>
             </div>
           ) : (
-            <p className="text-gray-700 font-semibold text-lg">
+            <p className="text-xl font-bold text-accent">
               Rs. {product.price.toLocaleString()}
             </p>
           )}
         </div>
 
-        {/* Stock & Button */}
-        <div className="mt-4 flex items-center justify-between">
-          <span
-            className={`text-sm font-medium ${
-              product.isAvailable && product.stock > 0
-                ? "text-green-600"
-                : "text-red-500"
-            }`}
-          >
-            {product.isAvailable && product.stock > 0 ? "In Stock" : "Out of Stock"}
-          </span>
-
-          <button
-            disabled={!product.isAvailable || product.stock <= 0}
-            className="px-3 py-1 text-sm rounded-md text-white bg-blue-600 hover:bg-blue-700 disabled:bg-gray-400 transition"            
-          >
-            
-            {product.isAvailable && product.stock > 0 ? "Buy Now" : "Unavailable"}
-          </button>
-        </div>
+        {/* BUY BUTTON */}
+        <button
+          disabled={!product.isAvailable || product.stock <= 0}
+          className={`mt-4 w-full py-2 rounded-xl font-semibold text-white text-sm transition-colors duration-300 ${
+            product.isAvailable && product.stock > 0
+              ? "bg-gradient-to-r from-blue-500 to-indigo-500 hover:from-indigo-500 hover:to-blue-500"
+              : "bg-gray-400 cursor-not-allowed"
+          }`}
+        >
+          {product.isAvailable && product.stock > 0 ? "Buy Now" : "Unavailable"}
+        </button>
       </div>
     </Link>
   );
