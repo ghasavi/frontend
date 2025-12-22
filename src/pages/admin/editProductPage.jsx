@@ -8,7 +8,7 @@ export default function EditProductPage() {
 	const location = useLocation();
 	const navigate = useNavigate();
 
-	// 🛡️ redirect if page was refreshed and state is missing
+	// 🚨 redirect if refreshed
 	useEffect(() => {
 		if (!location.state) {
 			toast.error("Invalid access to edit page");
@@ -18,145 +18,191 @@ export default function EditProductPage() {
 
 	if (!location.state) return null;
 
-	// ✅ Destructure with fallback
 	const state = location.state;
-	const [productId, setProductId] = useState(state.productId || "");
-	const [name, setName] = useState(state.name || "");
-	const [altNames, setAltNames] = useState(Array.isArray(state.altNames) ? state.altNames.join(",") : "");
-	const [description, setDescription] = useState(state.description || "");
-	const [images, setImages] = useState([]);
-	const [labelledPrice, setLabelledPrice] = useState(state.labelledPrice || "");
-	const [price, setPrice] = useState(state.price || "");
-	const [stock, setStock] = useState(state.stock || "");
 
+	// ================= STATE =================
+	const [productId] = useState(state.productId || ""); // 🔒 LOCKED
+	const [name, setName] = useState(state.name || "");
+	const [altNames, setAltNames] = useState(
+		Array.isArray(state.altNames) ? state.altNames.join(", ") : ""
+	);
+	const [description, setDescription] = useState(state.description || "");
+
+	const [displayImage, setDisplayImage] = useState(null);
+	const [galleryImages, setGalleryImages] = useState([]);
+
+	const [labelledPrice, setLabelledPrice] = useState(state.labelledPrice || 0);
+	const [price, setPrice] = useState(state.price || 0);
+	const [stock, setStock] = useState(state.stock || 0);
+
+	const [size, setSize] = useState(state.size || "");
+	const [medium, setMedium] = useState(state.medium || "");
+	const [material, setMaterial] = useState(state.material || "");
+	const [year, setYear] = useState(state.year || "");
+
+	// ================= UPDATE PRODUCT =================
 	async function updateProduct() {
 		const token = localStorage.getItem("token");
-		if (!token) {
-			toast.error("Please login first");
-			return;
-		}
-
-		let imageUrls = state.images;
-
-		const promisesArray = [];
-
-		for (let i = 0; i < images.length; i++) {
-			promisesArray[i] = mediaUpload(images[i]);
-		}
+		if (!token) return toast.error("Login first");
 
 		try {
-			if (images.length > 0) {
-				imageUrls = await Promise.all(promisesArray);
+			let displayImageUrl = state.displayImage;
+			let imageUrls = state.images || [];
+
+			// upload new display image if selected
+			if (displayImage) {
+				displayImageUrl = await mediaUpload(displayImage);
 			}
 
-			const altNamesArray = altNames.split(",").map((name) => name.trim());
+			// upload new gallery images if selected
+			if (galleryImages.length > 0) {
+				imageUrls = await Promise.all(
+					Array.from(galleryImages).map((img) => mediaUpload(img))
+				);
+			}
 
 			const product = {
-				productId,
+				productId, // 🔒 unchanged
 				name,
-				altNames: altNamesArray,
+				altNames: altNames.split(",").map((n) => n.trim()),
 				description,
+				displayImage: displayImageUrl,
 				images: imageUrls,
 				labelledPrice,
 				price,
 				stock,
+				size,
+				medium,
+				material,
+				year,
 			};
 
 			await axios.put(
 				import.meta.env.VITE_BACKEND_URL + "/api/products/" + productId,
 				product,
 				{
-					headers: {
-						Authorization: "Bearer " + token,
-					},
+					headers: { Authorization: "Bearer " + token },
 				}
 			);
 
-			toast.success("Product updated successfully");
+			toast.success("Product updated 🔥");
 			navigate("/admin/products");
-		} catch (e) {
-			console.log(e);
-			toast.error(e.response?.data?.message || "Failed to update");
+		} catch (err) {
+			console.error(err);
+			toast.error("Failed to update product");
 		}
 	}
 
+	// ================= UI =================
 	return (
-		<div className="w-full min-h-screen flex flex-col justify-center items-center bg-[#f5f3ef] text-[#4e342e] p-6">
-	<h1 className="text-4xl font-extrabold mb-6 text-[#3e2723]">Edit Product</h1>
+		<div className="w-full max-w-xl mx-auto bg-white p-6 rounded-xl shadow space-y-3">
 
-	<input
-		type="text"
-		disabled
-		placeholder="Product ID"
-		className="input input-bordered w-full max-w-xs mb-3 bg-[#d7ccc8] border-[#8d6e63] placeholder-[#5d4037] text-[#4e342e]"
-		value={productId}
-		onChange={(e) => setProductId(e.target.value)}
-	/>
-	<input
-		type="text"
-		placeholder="Name"
-		className="input input-bordered w-full max-w-xs mb-3 bg-[#efebe9] border-[#8d6e63] placeholder-[#5d4037] text-[#4e342e]"
-		value={name}
-		onChange={(e) => setName(e.target.value)}
-	/>
-	<input
-		type="text"
-		placeholder="Alt Names"
-		className="input input-bordered w-full max-w-xs mb-3 bg-[#efebe9] border-[#8d6e63] placeholder-[#5d4037] text-[#4e342e]"
-		value={altNames}
-		onChange={(e) => setAltNames(e.target.value)}
-	/>
-	<input
-		type="text"
-		placeholder="Description"
-		className="input input-bordered w-full max-w-xs mb-3 bg-[#efebe9] border-[#8d6e63] placeholder-[#5d4037] text-[#4e342e]"
-		value={description}
-		onChange={(e) => setDescription(e.target.value)}
-	/>
-	<input
-		type="file"
-		placeholder="Images"
-		multiple
-		className="input input-bordered w-full max-w-xs mb-3 bg-[#efebe9] border-[#8d6e63] text-[#4e342e]"
-		onChange={(e) => setImages(e.target.files)}
-	/>
-	<input
-		type="number"
-		placeholder="Labelled Price"
-		className="input input-bordered w-full max-w-xs mb-3 bg-[#efebe9] border-[#8d6e63] placeholder-[#5d4037] text-[#4e342e]"
-		value={labelledPrice}
-		onChange={(e) => setLabelledPrice(e.target.value)}
-	/>
-	<input
-		type="number"
-		placeholder="Price"
-		className="input input-bordered w-full max-w-xs mb-3 bg-[#efebe9] border-[#8d6e63] placeholder-[#5d4037] text-[#4e342e]"
-		value={price}
-		onChange={(e) => setPrice(e.target.value)}
-	/>
-	<input
-		type="number"
-		placeholder="Stock"
-		className="input input-bordered w-full max-w-xs mb-3 bg-[#efebe9] border-[#8d6e63] placeholder-[#5d4037] text-[#4e342e]"
-		value={stock}
-		onChange={(e) => setStock(e.target.value)}
-	/>
+			{/* PRODUCT ID (LOCKED) */}
+			<input
+				className="input input-bordered w-full bg-gray-200 cursor-not-allowed"
+				value={productId}
+				disabled
+			/>
 
-	<div className="w-full flex justify-center flex-row items-center mt-6">
-		<Link
-			to="/admin/products"
-			className="bg-[#8d6e63] hover:bg-[#6d4c41] text-white font-bold py-2 px-5 rounded mr-4 transition-all duration-200"
-		>
-			Cancel
-		</Link>
-		<button
-			className="bg-[#6d4c41] hover:bg-[#4e342e] text-white font-bold py-2 px-5 rounded transition-all duration-200"
-			onClick={updateProduct}
-		>
-			Update Product
-		</button>
-	</div>
-</div>
+			<input
+				className="input input-bordered w-full"
+				placeholder="Name"
+				value={name}
+				onChange={(e) => setName(e.target.value)}
+			/>
 
+			<input
+				className="input input-bordered w-full"
+				placeholder="Alt Names (comma separated)"
+				value={altNames}
+				onChange={(e) => setAltNames(e.target.value)}
+			/>
+
+			<textarea
+				className="textarea textarea-bordered w-full"
+				placeholder="Description"
+				value={description}
+				onChange={(e) => setDescription(e.target.value)}
+			/>
+
+			{/* DISPLAY IMAGE */}
+			<label className="font-semibold">Change Display Image (optional)</label>
+			<input
+				type="file"
+				className="file-input file-input-bordered w-full"
+				onChange={(e) => setDisplayImage(e.target.files[0])}
+			/>
+
+			{/* GALLERY IMAGES */}
+			<label className="font-semibold">Change Gallery Images (optional)</label>
+			<input
+				type="file"
+				multiple
+				className="file-input file-input-bordered w-full"
+				onChange={(e) => setGalleryImages(e.target.files)}
+			/>
+
+			<input
+				type="number"
+				className="input input-bordered w-full"
+				placeholder="Labelled Price"
+				value={labelledPrice}
+				onChange={(e) => setLabelledPrice(e.target.value)}
+			/>
+
+			<input
+				type="number"
+				className="input input-bordered w-full"
+				placeholder="Price"
+				value={price}
+				onChange={(e) => setPrice(e.target.value)}
+			/>
+
+			<input
+				type="number"
+				className="input input-bordered w-full"
+				placeholder="Stock"
+				value={stock}
+				onChange={(e) => setStock(e.target.value)}
+			/>
+
+			<input
+				className="input input-bordered w-full"
+				placeholder="Size"
+				value={size}
+				onChange={(e) => setSize(e.target.value)}
+			/>
+
+			<input
+				className="input input-bordered w-full"
+				placeholder="Medium"
+				value={medium}
+				onChange={(e) => setMedium(e.target.value)}
+			/>
+
+			<input
+				className="input input-bordered w-full"
+				placeholder="Material"
+				value={material}
+				onChange={(e) => setMaterial(e.target.value)}
+			/>
+
+			<input
+				type="number"
+				className="input input-bordered w-full"
+				placeholder="Year"
+				value={year}
+				onChange={(e) => setYear(e.target.value)}
+			/>
+
+			<div className="flex justify-between mt-4">
+				<Link to="/admin/products" className="btn btn-error">
+					Cancel
+				</Link>
+				<button onClick={updateProduct} className="btn btn-success">
+					Update Product
+				</button>
+			</div>
+		</div>
 	);
 }
