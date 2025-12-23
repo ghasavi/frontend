@@ -1,88 +1,249 @@
-import { useState } from "react"
-import { addToCart, getCart, getTotal, removeFromCart } from "../../utils/cart"
-import { BiMinus, BiPlus, BiTrash } from "react-icons/bi"
-import { Link } from "react-router-dom"
+import { useState } from "react";
+import { addToCart, getCart, removeFromCart } from "../../utils/cart";
+import { BiMinus, BiPlus, BiTrash } from "react-icons/bi";
+import { useNavigate } from "react-router-dom";
 
-export default function CartPage(){
-    const [cart,setCart] = useState(getCart())
+export default function CartPage() {
+	const navigate = useNavigate();
 
-    return(
-        <div className="w-full max-w-full  h-full flex flex-col items-center pt-4 relative ">
-            <div className="z-50 hidden  w-[400px] h-[80px] shadow-2xl absolute bottom-1 md:top-1 right-1 md:flex flex-col justify-center items-center">
-                <p className="text-2xl text-secondary font-bold">Total: 
-                    <span className="text-accent font-bold mx-2">
-                        {getTotal().toFixed(2)}
-                    </span>
-                </p>
-                <Link to="/checkout" state={
-                    {
-                        cart: cart
-                    }
-                } className="text-white bg-accent px-4 py-2 rounded-lg font-bold hover:bg-secondary transition-all duration-300">
-                    Checkout
-                </Link>
-            </div>
-            {
-                cart.map(
-                    (item)=>{
-                        return(
-                            <div key={item.productId} className="w-[70%] md:w-[600px] my-4 md:h-[100px] rounded-tl-3xl rounded-bl-3xl bg-primary shadow-2xl flex flex-col md:flex-row relative justify-center items-center p-2 md:pt-0">
-                                <img src={item.image} className="w-[100px] h-[100px] object-cover rounded-3xl"/>
-                                <div className="w-[250px] h-full flex flex-col justify-center  items-center md:items-start pl-4">
-                                    <h1 className="text-xl text-secondary font-semibold">{item.name}</h1>
-                                    <h1 className="text-md text-gray-600 font-semibold">{item.productId}</h1>
-                                    {
-                                        item.labelledPrice > item.price ?
-                                        <div>
-                                            <span className="text-md mx-1 text-gray-500 line-through">{item.labelledPrice.toFixed(2)}</span>
-                                            <span className="text-md mx-1 font-bold text-accent">{item.price.toFixed(2)}</span>
-                                        </div>
-                                        :<span className="text-md mx-1 font-bold text-accent">{item.price.toFixed(2)}</span>
-                                    }
-                                </div>
-                                <div className="max-w-[100px] w-[100px]  h-full flex flex-row justify-evenly items-center">
-                                    <button className="text-white font-bold rounded-xl hover:bg-secondary p-2 text-xl cursor-pointer aspect-square bg-accent"
-                                    onClick={()=>{
-                                        addToCart(item, -1)
-                                        setCart(getCart())
-                                    }}><BiMinus/></button>
-                                    <h1 className="text-xl text-secondary font-semibold h-full flex items-center">{item.qty}</h1>
-                                    <button className="text-white font-bold rounded-xl hover:bg-secondary p-2 text-xl cursor-pointer  aspect-square bg-accent" onClick={()=>{
-                                        addToCart(item , 1)
-                                        setCart(getCart())
-                                    }}><BiPlus/></button>                                
-                                </div>
-                                {/* total */}
-                                <div className="w-[200px] h-full flex flex-col justify-center items-center md:items-end pr-4">
-                                    <h1 className="text-2xl text-secondary font-semibold">Rs. {(item.price*item.qty).toFixed(2)}</h1>
-                                </div>
-                                <button className="absolute text-red-600 cursor-pointer hover:bg-red-600 hover:text-white rounded-full p-2 right-[-35px] " onClick={
-                                    ()=>{
-                                        removeFromCart(item.productId)
-                                        setCart(getCart())
-                                    }
-                                }>
-                                    <BiTrash/>
-                                </button>
-                            </div> 
-                        )
-                    }
-                )
-            }
-            <div className="z-50 md:hidden  flex w-full h-[100px] shadow-2xl    flex-col justify-center items-center">
-                <p className="text-2xl text-secondary font-bold">Total: 
-                    <span className="text-accent font-bold mx-2">
-                        {getTotal().toFixed(2)}
-                    </span>
-                </p>
-                <Link to="/checkout" state={
-                    {
-                        cart: cart
-                    }
-                } className="text-white bg-accent px-4 py-2 rounded-lg font-bold hover:bg-secondary transition-all duration-300">
-                    Checkout
-                </Link>
-            </div>
-        </div>
-    )
+	const [cart, setCart] = useState(getCart());
+	const [selectedIds, setSelectedIds] = useState([]);
+
+	/* ================= SELECTION ================= */
+	const toggleSelect = (productId) => {
+		setSelectedIds((prev) =>
+			prev.includes(productId)
+				? prev.filter((id) => id !== productId)
+				: [...prev, productId]
+		);
+	};
+
+	const isAllSelected =
+		cart.length > 0 && selectedIds.length === cart.length;
+
+	const toggleSelectAll = () => {
+		if (isAllSelected) {
+			setSelectedIds([]);
+		} else {
+			setSelectedIds(cart.map((item) => item.productId));
+		}
+	};
+
+	const selectedItems = cart.filter((item) =>
+		selectedIds.includes(item.productId)
+	);
+
+	/* ================= TOTALS ================= */
+	const itemTotal = selectedItems.reduce(
+		(sum, item) =>
+			sum +
+			Number(item.labelledPrice || item.price || 0) *
+				Number(item.qty || 1),
+		0
+	);
+
+	const finalTotal = selectedItems.reduce(
+		(sum, item) =>
+			sum + Number(item.price || 0) * Number(item.qty || 1),
+		0
+	);
+
+	const discount = itemTotal - finalTotal;
+	const canCheckout = selectedItems.length > 0;
+
+	/* ================= CHECKOUT ================= */
+	const handleCheckout = () => {
+		if (!canCheckout) return;
+
+		navigate("/checkout", {
+			state: { cart: selectedItems },
+		});
+	};
+
+	return (
+		<div className="w-full h-full flex flex-col items-center pt-4 relative">
+
+			{/* ORDER SUMMARY (DESKTOP) */}
+			<div className="hidden md:flex w-[350px] absolute top-4 right-4 bg-white shadow-2xl rounded-2xl p-6 flex-col z-50">
+				<h2 className="text-xl font-bold text-secondary mb-4">
+					Order Summary
+				</h2>
+
+				<div className="flex justify-between mb-2 text-gray-700">
+					<span>Item Total</span>
+					<span>Rs. {itemTotal.toFixed(2)}</span>
+				</div>
+
+				<div className="flex justify-between mb-2 text-green-600">
+					<span>Discount</span>
+					<span>- Rs. {discount.toFixed(2)}</span>
+				</div>
+
+				<hr className="my-3" />
+
+				<div className="flex justify-between text-lg font-bold text-secondary mb-4">
+					<span>Total</span>
+					<span>Rs. {finalTotal.toFixed(2)}</span>
+				</div>
+
+				<button
+					onClick={handleCheckout}
+					disabled={!canCheckout}
+					className={`w-full py-3 rounded-xl font-bold transition
+						${canCheckout
+							? "bg-accent text-white hover:bg-secondary"
+							: "bg-gray-400 text-gray-700 cursor-not-allowed"
+						}`}
+				>
+					Checkout
+				</button>
+			</div>
+
+			{/* EMPTY CART */}
+			{cart.length === 0 && (
+				<p className="text-xl text-gray-500 mt-20">
+					Your cart is empty 🛒
+				</p>
+			)}
+
+			{/* SELECT ALL */}
+			{cart.length > 0 && (
+				<div className="w-[70%] md:w-[600px] flex justify-between mb-4">
+					<button
+						onClick={toggleSelectAll}
+						className="px-4 py-2 rounded-lg bg-secondary text-white font-semibold hover:bg-accent transition"
+					>
+						{isAllSelected ? "Unselect All" : "Select All"}
+					</button>
+
+					<p className="text-sm text-gray-600">
+						{selectedItems.length} selected
+					</p>
+				</div>
+			)}
+
+			{/* CART ITEMS */}
+			{cart.map((item) => {
+				const price = Number(item.price) || 0;
+				const labelledPrice = Number(item.labelledPrice) || 0;
+				const qty = Number(item.qty) || 1;
+				const isSelected = selectedIds.includes(item.productId);
+
+				return (
+					<div
+						key={item.productId}
+						className={`w-[70%] md:w-[600px] my-4 md:h-[100px] rounded-tl-3xl rounded-bl-3xl shadow-2xl flex flex-col md:flex-row relative items-center p-2
+							${isSelected ? "bg-primary" : "bg-gray-200 opacity-80"}
+						`}
+					>
+						{/* SELECT */}
+						<button
+							onClick={() => toggleSelect(item.productId)}
+							className={`absolute left-[-35px] w-6 h-6 rounded-full border-2
+								${isSelected
+									? "bg-accent border-accent"
+									: "border-gray-400 bg-white"
+								}`}
+						/>
+
+						<img
+							src={item.image}
+							alt={item.name}
+							className="w-[100px] h-[100px] object-cover rounded-3xl"
+						/>
+
+						{/* INFO */}
+						<div className="w-[250px] pl-4">
+							<h1 className="text-xl font-semibold text-secondary">
+								{item.name}
+							</h1>
+
+							{labelledPrice > price ? (
+								<div>
+									<span className="line-through text-gray-500 mr-2">
+										{labelledPrice.toFixed(2)}
+									</span>
+									<span className="font-bold text-accent">
+										{price.toFixed(2)}
+									</span>
+								</div>
+							) : (
+								<span className="font-bold text-accent">
+									{price.toFixed(2)}
+								</span>
+							)}
+						</div>
+
+						{/* QTY */}
+						<div className="w-[100px] flex justify-evenly items-center">
+							<button
+								disabled={qty <= 1}
+								className={`p-2 rounded-xl
+									${qty <= 1
+										? "bg-gray-400 cursor-not-allowed"
+										: "bg-accent text-white hover:bg-secondary"
+									}`}
+								onClick={() => {
+									if (qty > 1) {
+										addToCart(item, -1);
+										setCart(getCart());
+									}
+								}}
+							>
+								<BiMinus />
+							</button>
+
+							<span className="font-semibold">{qty}</span>
+
+							<button
+								className="p-2 rounded-xl bg-accent text-white hover:bg-secondary"
+								onClick={() => {
+									addToCart(item, 1);
+									setCart(getCart());
+								}}
+							>
+								<BiPlus />
+							</button>
+						</div>
+
+						{/* REMOVE */}
+						<button
+							className="absolute right-[-35px] p-2 rounded-full text-red-600 hover:bg-red-600 hover:text-white"
+							onClick={() => {
+								removeFromCart(item.productId);
+								setCart(getCart());
+								setSelectedIds((prev) =>
+									prev.filter((id) => id !== item.productId)
+								);
+							}}
+						>
+							<BiTrash />
+						</button>
+					</div>
+				);
+			})}
+
+			{/* MOBILE SUMMARY */}
+			<div className="md:hidden w-full h-[120px] shadow-2xl flex flex-col items-center justify-center">
+				<p className="text-xl font-bold text-secondary">
+					Total:{" "}
+					<span className="text-accent">
+						Rs. {finalTotal.toFixed(2)}
+					</span>
+				</p>
+
+				<button
+					onClick={handleCheckout}
+					disabled={!canCheckout}
+					className={`mt-2 px-6 py-2 rounded-lg font-bold
+						${canCheckout
+							? "bg-accent text-white"
+							: "bg-gray-400 text-gray-700"
+						}`}
+				>
+					Checkout
+				</button>
+			</div>
+		</div>
+	);
 }

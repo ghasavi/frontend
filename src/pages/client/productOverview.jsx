@@ -52,6 +52,9 @@ export default function ProductOverviewPage() {
 	const images = product?.images || [];
 	const altNames = product?.altNames || [];
 
+	const stock = Number(product?.stock) || 0;
+	const isOutOfStock = stock <= 0;
+
 	return (
 		<div className="w-full flex flex-col">
 
@@ -114,6 +117,16 @@ export default function ProductOverviewPage() {
 									<span className="font-bold">Year:</span> {product.year}
 								</p>
 							)}
+							
+							<p
+	className={`mt-2 font-semibold text-center
+		${isOutOfStock ? "text-red-500" : "text-green-600"}
+	`}
+>
+	{isOutOfStock ? "Out of stock" : `In stock (${stock})`}
+</p>
+
+
 						</div>
 
 						{/* PRICE */}
@@ -135,36 +148,57 @@ export default function ProductOverviewPage() {
 						{/* ACTIONS */}
 						<div className="w-full flex flex-col md:flex-row gap-2 justify-center items-center mt-4">
 							<button
-								className="w-[200px] h-[50px] mx-4 cursor-pointer bg-accent text-white rounded-2xl hover:bg-accent/80 transition-all duration-300"
-								onClick={() => {
-									addToCart(product, 1);
-									console.log("Cart:", getCart());
-								}}
-							>
-								Add to Cart
-							</button>
+							className={`w-[200px] h-[50px] mx-4 rounded-2xl transition-all duration-300
+								${isOutOfStock
+									? "bg-gray-400 cursor-not-allowed"
+									: "bg-accent text-white cursor-pointer hover:bg-accent/80"
+								}`}
+							onClick={() => {
+								if (isOutOfStock) {
+									toast.error("Out of stock 😭");
+									return;
+								}
+
+								addToCart(product, 1);
+								toast.success("Added to cart 🛒");
+							}}
+						>
+							Add to Cart
+						</button>
+
 
 							<button
-								className="w-[200px] h-[50px] mx-4 cursor-pointer bg-accent text-white rounded-2xl hover:bg-accent/80 transition-all duration-300"
-								onClick={() =>
-									navigate("/checkout", {
-										state: {
-											cart: [
-												{
-													productId: product?.productId,
-													name: product?.name,
-													image: images?.[0] || "",
-													price,
-													labelledPrice,
-													qty: 1,
-												},
-											],
-										},
-									})
-								}
-							>
-								Buy Now
-							</button>
+	className={`w-[200px] h-[50px] mx-4 rounded-2xl transition-all duration-300
+		${isOutOfStock
+			? "bg-gray-400 cursor-not-allowed"
+			: "bg-accent text-white cursor-pointer hover:bg-accent/80"
+		}`}
+	onClick={() => {
+		if (isOutOfStock) {
+			toast.error("Out of stock 😭");
+			return;
+		}
+
+		navigate("/checkout", {
+			state: {
+				cart: [
+					{
+						productId: product?.productId,
+						name: product?.name,
+						image: images?.[0] || "",
+						price,
+						labelledPrice,
+						qty: 1,
+					},
+				],
+			},
+		});
+	}}
+>
+	Buy Now
+</button>
+
+							
 						</div>
 
 					</div>
