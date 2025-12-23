@@ -1,208 +1,120 @@
 import { useEffect, useState } from "react";
+import { useNavigate } from "react-router-dom";
 import toast from "react-hot-toast";
-import { Link, useLocation, useNavigate } from "react-router-dom";
-import mediaUpload from "../../utils/mediaUpload";
-import axios from "axios";
 
-export default function EditProductPage() {
-	const location = useLocation();
-	const navigate = useNavigate();
+export default function EditProfile() {
+  const navigate = useNavigate();
+  const [user, setUser] = useState(null);
+  const [firstName, setFirstName] = useState("");
+  const [lastName, setLastName] = useState("");
+  const [imgFile, setImgFile] = useState(null);
+  const [loading, setLoading] = useState(true);
 
-	// 🚨 redirect if refreshed
-	useEffect(() => {
-		if (!location.state) {
-			toast.error("Invalid access to edit page");
-			navigate("/admin/products");
-		}
-	}, [location, navigate]);
+  useEffect(() => {
+    const token = localStorage.getItem("token");
+    if (!token) return navigate("/login");
 
-	if (!location.state) return null;
+    async function fetchUser() {
+      try {
+        const res = await fetch("http://localhost:5000/api/users/me", {
+          headers: { Authorization: `Bearer ${token}` },
+        });
+        if (!res.ok) throw new Error("Failed to fetch user");
+        const data = await res.json();
+        setUser(data);
+        setFirstName(data.firstName || "");
+        setLastName(data.lastName || "");
+        setLoading(false);
+      } catch (err) {
+        console.error(err);
+        toast.error("Failed to load profile. Redirecting to login...");
+        setTimeout(() => navigate("/login"), 2000);
+      }
+    }
 
-	const state = location.state;
+    fetchUser();
+  }, []);
 
-	// ================= STATE =================
-	const [productId] = useState(state.productId || ""); // 🔒 LOCKED
-	const [name, setName] = useState(state.name || "");
-	const [altNames, setAltNames] = useState(
-		Array.isArray(state.altNames) ? state.altNames.join(", ") : ""
-	);
-	const [description, setDescription] = useState(state.description || "");
+  const handleFileChange = (e) => {
+    setImgFile(e.target.files[0]);
+  };
 
-	const [displayImage, setDisplayImage] = useState(null);
-	const [galleryImages, setGalleryImages] = useState([]);
+  const handleSave = async () => {
+    const token = localStorage.getItem("token");
+    if (!token) return navigate("/login");
 
-	const [labelledPrice, setLabelledPrice] = useState(state.labelledPrice || 0);
-	const [price, setPrice] = useState(state.price || 0);
-	const [stock, setStock] = useState(state.stock || 0);
+    const formData = new FormData();
+    formData.append("firstName", firstName);
+    formData.append("lastName", lastName);
+    if (imgFile) formData.append("img", imgFile);
 
-	const [size, setSize] = useState(state.size || "");
-	const [medium, setMedium] = useState(state.medium || "");
-	const [material, setMaterial] = useState(state.material || "");
-	const [year, setYear] = useState(state.year || "");
+    try {
+      const res = await fetch("http://localhost:5000/api/users/me", {
+        method: "PUT",
+        headers: {
+          Authorization: `Bearer ${token}`,
+        },
+        body: formData,
+      });
 
-	// ================= UPDATE PRODUCT =================
-	async function updateProduct() {
-		const token = localStorage.getItem("token");
-		if (!token) return toast.error("Login first");
+      if (!res.ok) throw new Error("Failed to update profile");
+      const data = await res.json();
+      toast.success("Profile updated!");
+      setUser(data.user);
+      navigate("/profile"); // go back to profile page
+    } catch (err) {
+      console.error(err);
+      toast.error("Failed to update profile");
+    }
+  };
 
-		try {
-			let displayImageUrl = state.displayImage;
-			let imageUrls = state.images || [];
+  if (loading) return <div className="min-h-screen flex items-center justify-center text-white">Loading...</div>;
 
-			// upload new display image if selected
-			if (displayImage) {
-				displayImageUrl = await mediaUpload(displayImage);
-			}
+  return (
+    <div className="min-h-screen bg-gradient-to-br from-black via-zinc-900 to-black text-white px-6 py-20 flex flex-col items-center">
+      <h1 className="text-3xl font-bold mb-6">Edit Profile</h1>
 
-			// upload new gallery images if selected
-			if (galleryImages.length > 0) {
-				imageUrls = await Promise.all(
-					Array.from(galleryImages).map((img) => mediaUpload(img))
-				);
-			}
+      <div className="bg-zinc-900 p-8 rounded-xl w-full max-w-lg flex flex-col gap-4">
+        <label className="flex flex-col gap-2">
+          First Name
+          <input
+            type="text"
+            className="p-2 rounded bg-zinc-800 border border-zinc-700 text-white"
+            value={firstName}
+            onChange={(e) => setFirstName(e.target.value)}
+          />
+        </label>
 
-			const product = {
-				productId, // 🔒 unchanged
-				name,
-				altNames: altNames.split(",").map((n) => n.trim()),
-				description,
-				displayImage: displayImageUrl,
-				images: imageUrls,
-				labelledPrice,
-				price,
-				stock,
-				size,
-				medium,
-				material,
-				year,
-			};
+        <label className="flex flex-col gap-2">
+          Last Name
+          <input
+            type="text"
+            className="p-2 rounded bg-zinc-800 border border-zinc-700 text-white"
+            value={lastName}
+            onChange={(e) => setLastName(e.target.value)}
+          />
+        </label>
 
-			await axios.put(
-				import.meta.env.VITE_BACKEND_URL + "/api/products/" + productId,
-				product,
-				{
-					headers: { Authorization: "Bearer " + token },
-				}
-			);
+        <label className="flex flex-col gap-2">
+          Profile Picture
+          <input type="file" onChange={handleFileChange} />
+        </label>
 
-			toast.success("Product updated 🔥");
-			navigate("/admin/products");
-		} catch (err) {
-			console.error(err);
-			toast.error("Failed to update product");
-		}
-	}
+        {user.img && (
+          <img
+            src={imgFile ? URL.createObjectURL(imgFile) : user.img}
+            alt="Preview"
+            className="w-32 h-32 rounded-full object-cover border-2 border-white mt-2"
+          />
+        )}
 
-	// ================= UI =================
-	return (
-		<div className="w-full max-w-xl mx-auto bg-white p-6 rounded-xl shadow space-y-3">
-
-			{/* PRODUCT ID (LOCKED) */}
-			<input
-				className="input input-bordered w-full bg-gray-200 cursor-not-allowed"
-				value={productId}
-				disabled
-			/>
-
-			<input
-				className="input input-bordered w-full"
-				placeholder="Name"
-				value={name}
-				onChange={(e) => setName(e.target.value)}
-			/>
-
-			<input
-				className="input input-bordered w-full"
-				placeholder="Alt Names (comma separated)"
-				value={altNames}
-				onChange={(e) => setAltNames(e.target.value)}
-			/>
-
-			<textarea
-				className="textarea textarea-bordered w-full"
-				placeholder="Description"
-				value={description}
-				onChange={(e) => setDescription(e.target.value)}
-			/>
-
-			{/* DISPLAY IMAGE */}
-			<label className="font-semibold">Change Display Image (optional)</label>
-			<input
-				type="file"
-				className="file-input file-input-bordered w-full"
-				onChange={(e) => setDisplayImage(e.target.files[0])}
-			/>
-
-			{/* GALLERY IMAGES */}
-			<label className="font-semibold">Change Gallery Images (optional)</label>
-			<input
-				type="file"
-				multiple
-				className="file-input file-input-bordered w-full"
-				onChange={(e) => setGalleryImages(e.target.files)}
-			/>
-
-			<input
-				type="number"
-				className="input input-bordered w-full"
-				placeholder="Labelled Price"
-				value={labelledPrice}
-				onChange={(e) => setLabelledPrice(e.target.value)}
-			/>
-
-			<input
-				type="number"
-				className="input input-bordered w-full"
-				placeholder="Price"
-				value={price}
-				onChange={(e) => setPrice(e.target.value)}
-			/>
-
-			<input
-				type="number"
-				className="input input-bordered w-full"
-				placeholder="Stock"
-				value={stock}
-				onChange={(e) => setStock(e.target.value)}
-			/>
-
-			<input
-				className="input input-bordered w-full"
-				placeholder="Size"
-				value={size}
-				onChange={(e) => setSize(e.target.value)}
-			/>
-
-			<input
-				className="input input-bordered w-full"
-				placeholder="Medium"
-				value={medium}
-				onChange={(e) => setMedium(e.target.value)}
-			/>
-
-			<input
-				className="input input-bordered w-full"
-				placeholder="Material"
-				value={material}
-				onChange={(e) => setMaterial(e.target.value)}
-			/>
-
-			<input
-				type="number"
-				className="input input-bordered w-full"
-				placeholder="Year"
-				value={year}
-				onChange={(e) => setYear(e.target.value)}
-			/>
-
-			<div className="flex justify-between mt-4">
-				<Link to="/admin/products" className="btn btn-error">
-					Cancel
-				</Link>
-				<button onClick={updateProduct} className="btn btn-success">
-					Update Product
-				</button>
-			</div>
-		</div>
-	);
+        <button
+          className="mt-4 px-6 py-2 bg-green-600 hover:bg-green-700 rounded-xl font-semibold transition"
+          onClick={handleSave}
+        >
+          Save Changes
+        </button>
+      </div>
+    </div>
+  );
 }

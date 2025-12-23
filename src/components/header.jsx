@@ -1,71 +1,135 @@
 import { Link, useNavigate } from "react-router-dom";
-import UserData from "./userData";
-import { BsCart3 } from "react-icons/bs";
+import { BsCart3, BsPersonCircle } from "react-icons/bs";
 import { GiHamburgerMenu } from "react-icons/gi";
-import { useState } from "react";
+import { useState, useRef, useEffect } from "react";
 
-export default function Header(){
-    const [sideDrawerOpened, setSideDrawerOpened] = useState(false)
-    const navigate = useNavigate()
-    const token = localStorage.getItem("token");
-    return(
-        <header className="w-full h-[80px] shadow-2xl flex justify-center relative ">
-            <GiHamburgerMenu className="h-full text-3xl md:hidden absolute left-2" onClick={
-                ()=>{
-                    setSideDrawerOpened(true)
-                }
-            }/>
-            <img onClick={()=>{
-                navigate("/")
-            }} src="/logo.png" alt="Logo" className="w-[80px] h-[80px] object-cover cursor-pointer"/>
-            <div className="w-[calc(100%-160px)] h-full hidden md:flex justify-center items-center">
-                <Link to="/" className=" text-[20px] font-bold mx-2">Home</Link>
-                <Link to="/products" className=" text-[20px] font-bold mx-2">Products</Link>
-                <Link to="/about" className=" text-[20px] font-bold mx-2">About</Link>
-            </div>
-            <div className="w-[160px] hidden md:flex justify-center items-center">
-                {
-                    token==null?
-                    <Link to="/login" className="text-[20px] font-bold mx-2">Login</Link>
-                    :
-                    <button className="text-[20px] font-bold mx-2" onClick={()=>{
-                        localStorage.removeItem("token");
-                        localStorage.removeItem("user");
-                        window.location.href = "/";
-                    }
-                    }>Logout</button>
-                }
-                <Link to="/cart" className="text-[20px] font-bold mx-2">
-                   <BsCart3 />
-                </Link>
-            </div>
-            {
-                sideDrawerOpened&&
-                <div className="fixed  h-screen w-full bg-[#00000060] flex md:hidden">
-                    <div className="w-[350px] bg-white h-full">
-                        <div className="w-full h-[80px] shadow-2xl flex justify-center items-center relative">
-                            <GiHamburgerMenu className="h-full text-3xl absolute left-2 cursor-pointer" onClick={()=>{
-                                setSideDrawerOpened(false)
-                            }} />
-                            <img onClick={()=>{
-                                window.location.href = "/"
-                            }} src="/logo.png" alt="Logo" className="w-[80px] h-[80px] object-cover cursor-pointer"/>
+export default function Header() {
+	const [sideDrawerOpened, setSideDrawerOpened] = useState(false);
+	const [profileOpen, setProfileOpen] = useState(false);
+	const navigate = useNavigate();
+	const token = localStorage.getItem("token");
+	const profileRef = useRef(null);
 
-                        </div>
-                        <div className="w-full h-[calc(100%-80px)] flex flex-col items-center gap-2">
-                            <a href="/" className="text-[20px] font-bold mx-2 my-4">Home</a>
-                            <a href="/products" className="text-[20px] font-bold mx-2 my-4">Products</a>
-                            <a href="/about" className="text-[20px] font-bold mx-2 my-4">About</a>
-                            <a href="/cart" className="text-[20px] font-bold mx-2 my-4">
-                                <BsCart3 />
-                            </a>
-                        </div>
+	// close dropdown when clicking outside
+	useEffect(() => {
+		function handleClickOutside(e) {
+			if (profileRef.current && !profileRef.current.contains(e.target)) {
+				setProfileOpen(false);
+			}
+		}
+		document.addEventListener("mousedown", handleClickOutside);
+		return () => document.removeEventListener("mousedown", handleClickOutside);
+	}, []);
 
-                    </div>
+	function handleProfileClick() {
+		if (!token) {
+			navigate("/login");
+		} else {
+			setProfileOpen(!profileOpen);
+		}
+	}
 
-                </div>
-            }
+	function handleLogout() {
+		localStorage.removeItem("token");
+		localStorage.removeItem("user");
+		window.location.href = "/";
+	}
 
-        </header>
-    )
+	return (
+		<header className="w-full h-[80px] shadow-2xl flex justify-center items-center relative bg-white">
+			
+			{/* MOBILE MENU */}
+			<GiHamburgerMenu
+				className="text-3xl md:hidden absolute left-4 cursor-pointer"
+				onClick={() => setSideDrawerOpened(true)}
+			/>
+
+			{/* LOGO */}
+			<img
+				src="/logo.png"
+				alt="Logo"
+				className="w-[80px] h-[80px] object-cover cursor-pointer"
+				onClick={() => navigate("/")}
+			/>
+
+			{/* DESKTOP NAV */}
+			<div className="w-[calc(100%-240px)] h-full hidden md:flex justify-center items-center">
+				<Link to="/" className="text-[18px] font-bold mx-3">Home</Link>
+				<Link to="/products" className="text-[18px] font-bold mx-3">Products</Link>
+				<Link to="/about" className="text-[18px] font-bold mx-3">About</Link>
+			</div>
+
+			{/* RIGHT ICONS */}
+			<div className="w-[240px] hidden md:flex justify-end items-center gap-6 pr-6 relative">
+
+				<Link to="/cart" className="text-2xl">
+					<BsCart3 />
+				</Link>
+
+				{/* PROFILE */}
+				<div ref={profileRef} className="relative">
+					<BsPersonCircle
+						className="text-3xl cursor-pointer"
+						onClick={handleProfileClick}
+					/>
+
+					{/* DROPDOWN */}
+					{profileOpen && token && (
+						<div className="absolute right-0 top-12 w-56 bg-white shadow-xl rounded-xl border z-50">
+							<ul className="flex flex-col text-sm font-medium">
+								<li onClick={() => navigate("/profile")} className="px-4 py-3 hover:bg-gray-100 cursor-pointer">
+									Your Profile
+								</li>
+								<li onClick={() => navigate("/orders")} className="px-4 py-3 hover:bg-gray-100 cursor-pointer">
+									Your Orders
+								</li>
+								<li onClick={() => navigate("/favourites")} className="px-4 py-3 hover:bg-gray-100 cursor-pointer">
+									Your Favourites
+								</li>
+								<li onClick={() => navigate("/reviews")} className="px-4 py-3 hover:bg-gray-100 cursor-pointer">
+									Your Reviews
+								</li>
+								<li
+									onClick={handleLogout}
+									className="px-4 py-3 hover:bg-red-100 text-red-600 cursor-pointer rounded-b-xl"
+								>
+									Sign Out
+								</li>
+							</ul>
+						</div>
+					)}
+				</div>
+			</div>
+
+			{/* MOBILE SIDE DRAWER */}
+			{sideDrawerOpened && (
+				<div className="fixed inset-0 bg-black/40 z-50 md:hidden">
+					<div className="w-[300px] bg-white h-full">
+						<div className="h-[80px] flex items-center justify-center shadow relative">
+							<GiHamburgerMenu
+								className="text-3xl absolute left-4 cursor-pointer"
+								onClick={() => setSideDrawerOpened(false)}
+							/>
+							<img
+								src="/logo.png"
+								alt="Logo"
+								className="w-[80px] h-[80px] object-cover cursor-pointer"
+								onClick={() => window.location.href = "/"}
+							/>
+						</div>
+
+						<div className="flex flex-col items-center gap-6 mt-10 text-lg font-bold">
+							<Link to="/">Home</Link>
+							<Link to="/products">Products</Link>
+							<Link to="/about">About</Link>
+							<Link to="/cart"><BsCart3 /></Link>
+							<button onClick={handleProfileClick} className="mt-6">
+								Profile
+							</button>
+						</div>
+					</div>
+				</div>
+			)}
+		</header>
+	);
 }
