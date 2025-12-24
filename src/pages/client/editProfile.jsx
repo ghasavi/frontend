@@ -1,10 +1,12 @@
-import { useEffect, useState } from "react";
+import { useEffect, useState, useContext } from "react";
 import { useNavigate } from "react-router-dom";
+import { UserContext } from "../../context/UserContext";
 
 export default function EditProfile() {
   const navigate = useNavigate();
-  const [user, setUser] = useState(null);
-  const [name, setName] = useState("");
+  const { user, setUser, token } = useContext(UserContext);
+
+  const [username, setUsername] = useState("");
   const [avatar, setAvatar] = useState(null);
   const [preview, setPreview] = useState(null);
   const [loading, setLoading] = useState(true);
@@ -12,50 +14,48 @@ export default function EditProfile() {
   const [error, setError] = useState("");
 
   useEffect(() => {
-    const token = localStorage.getItem("token");
-    if (!token) {
-      navigate("/login");
-      return;
-    }
+    if (!token) return navigate("/login");
 
-    async function fetchUser() {
-      try {
-        const res = await fetch("http://localhost:5000/api/users/me", {
-          headers: { Authorization: `Bearer ${token}` },
-        });
-
-        if (!res.ok) throw new Error("Failed to fetch user");
-
-        const data = await res.json();
-        setUser(data);
-        setName(`${data.firstName} ${data.lastName}`);
-        setPreview(data.img || "/default-avatar.png");
-        setLoading(false);
-      } catch (err) {
-        console.error(err);
-        setError("Failed to load profile. Redirecting to login...");
-        setTimeout(() => navigate("/login"), 2000);
+    if (user) {
+      setUsername(user.username);
+      setPreview(user.img || "/defaultUser.png");
+      setLoading(false);
+    } else {
+      async function fetchUser() {
+        try {
+          const res = await fetch("http://localhost:5000/api/users/me", {
+            headers: { Authorization: `Bearer ${token}` },
+          });
+          if (!res.ok) throw new Error("Failed to fetch user");
+          const data = await res.json();
+          setUsername(data.username);
+          setPreview(data.img || "/defaultUser.png");
+          setUser(data); // set context
+          setLoading(false);
+        } catch (err) {
+          console.error(err);
+          setError("Failed to load profile. Redirecting to login...");
+          setTimeout(() => navigate("/login"), 2000);
+        }
       }
+      fetchUser();
     }
-
-    fetchUser();
-  }, []);
+  }, [token, navigate, user, setUser]);
 
   const handleAvatarChange = (e) => {
     const file = e.target.files[0];
     setAvatar(file);
-    setPreview(URL.createObjectURL(file));
+    const previewURL = URL.createObjectURL(file);
+    setPreview(previewURL);
+
+    // update context so header shows preview instantly
+    setUser({ ...user, img: previewURL });
   };
 
   const handleSave = async () => {
     setSaving(true);
-    const token = localStorage.getItem("token");
     const formData = new FormData();
-    const [firstName, ...rest] = name.split(" ");
-    const lastName = rest.join(" ");
-
-    formData.append("firstName", firstName);
-    formData.append("lastName", lastName);
+    formData.append("username", username);
     if (avatar) formData.append("avatar", avatar);
 
     try {
@@ -65,21 +65,38 @@ export default function EditProfile() {
         body: formData,
       });
 
-      if (!res.ok) throw new Error("Failed to update profile");
+      if (!res.ok) {
+        const errData = await res.json();
+        throw new Error(errData.message || "Failed to update profile");
+      }
 
       const data = await res.json();
-      console.log("Profile updated:", data);
-      navigate("/profile"); // go back to profile page
+
+      // update context with backend returned URL
+      setUser(data);
+
+      navigate("/profile");
     } catch (err) {
-      console.error(err);
-      setError("Failed to update profile");
+      console.error("Update error:", err);
+      setError(err.message);
     } finally {
       setSaving(false);
     }
   };
 
-  if (loading) return <div className="min-h-screen flex justify-center items-center text-white">Loading...</div>;
-  if (error) return <div className="min-h-screen flex justify-center items-center text-red-500">{error}</div>;
+  if (loading)
+    return (
+      <div className="min-h-screen flex justify-center items-center text-white">
+        Loading...
+      </div>
+    );
+
+  if (error)
+    return (
+      <div className="min-h-screen flex justify-center items-center text-red-500">
+        {error}
+      </div>
+    );
 
   return (
     <div className="min-h-screen bg-zinc-900 text-white px-6 py-20 flex justify-center">
@@ -87,19 +104,25 @@ export default function EditProfile() {
         <h1 className="text-2xl font-bold">Edit Profile</h1>
 
         <div className="flex flex-col items-center gap-4">
-          <img src={preview} alt="Avatar" className="w-32 h-32 rounded-full border-2 border-white object-cover" />
+          <img
+            src={preview || "/defaultUser.png"}
+            alt="Avatar"
+            className="w-32 h-32 rounded-full border-2 border-white object-cover"
+            onError={(e) => {
+              e.target.onerror = null;
+              e.target.src = "/defaultUser.png";
+            }}
+          />
           <input type="file" accept="image/*" onChange={handleAvatarChange} />
         </div>
 
-        <div className="flex flex-col">
-          <label className="mb-1 text-zinc-400">Display Name</label>
-          <input
-            type="text"
-            value={name}
-            onChange={(e) => setName(e.target.value)}
-            className="p-2 rounded bg-zinc-700 text-white"
-          />
-        </div>
+        <input
+          type="text"
+          placeholder="Username"
+          value={username}
+          onChange={(e) => setUsername(e.target.value)}
+          className="p-2 rounded bg-zinc-700 text-white"
+        />
 
         <button
           onClick={handleSave}
@@ -108,6 +131,8 @@ export default function EditProfile() {
         >
           {saving ? "Saving..." : "Save Changes"}
         </button>
+
+        {error && <p className="text-red-500">{error}</p>}
       </div>
     </div>
   );

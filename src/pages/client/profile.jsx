@@ -61,20 +61,31 @@ export default function ProfilePage() {
       <div className="max-w-4xl mx-auto bg-zinc-900 border border-zinc-800 rounded-xl p-10 flex flex-col md:flex-row items-center gap-10 shadow-xl">
         <div className="flex-shrink-0">
           <img
-            src={user.img || "/default-avatar.png"}
-            alt="Avatar"
-            className="w-40 h-40 rounded-full border-4 border-white object-cover"
-          />
+  src={user.img || "/defaultUser.png"}
+  alt="Avatar"
+  className="w-40 h-40 rounded-full border-4 border-white object-cover"
+  onError={(e) => {
+    e.target.onerror = null; // prevent infinite loop
+    e.target.src = "/defaultUser.png"; // fallback if user.img fails to load
+  }}
+/>
+
+
         </div>
 
         <div className="flex-1 space-y-4">
-          <h1 className="text-4xl font-bold">{user.firstName} {user.lastName}</h1>
-          <p className="text-zinc-400 text-lg">{user.email}</p>
+          <h1 className="text-4xl font-bold">{user.username}</h1>
+<p className="text-zinc-400 text-lg">{user.email}</p>
+
           {user.bio && <p className="text-zinc-300 mt-2">{user.bio}</p>}
           <div className="flex gap-6 mt-4">
             <div>
               <p className="text-zinc-400 text-sm">Role</p>
               <p className="text-white font-semibold">{user.role}</p>
+              <p className="text-white font-semibold">
+  Joined: {new Date(user.createdAt).toLocaleDateString()}
+</p>
+
             </div>
           </div>
         </div>
