@@ -1,8 +1,8 @@
-import axios from "axios";
 import { useEffect, useState } from "react";
 import ProductCard from "../../components/productCard";
 import Loading from "../../components/loading";
 import toast from "react-hot-toast";
+import api from "../../utils/axios"; // ✅ use your axios instance
 
 export default function ProductPage() {
   const [products, setProducts] = useState([]);
@@ -12,8 +12,8 @@ export default function ProductPage() {
   // Fetch all products initially
   useEffect(() => {
     if (isLoading && query.length === 0) {
-      axios
-        .get(import.meta.env.VITE_BACKEND_URL + "/api/products")
+      api
+        .get("/products")
         .then((res) => {
           setProducts(res.data);
           setIsLoading(false);
@@ -32,25 +32,15 @@ export default function ProductPage() {
     setQuery(value);
     setIsLoading(true);
 
-    if (value.length === 0) {
-      // Show all products if search is cleared
-      try {
-        const res = await axios.get(import.meta.env.VITE_BACKEND_URL + "/api/products");
-        setProducts(res.data);
-      } catch (error) {
-        toast.error("Error fetching products");
-        console.error(error);
-      } finally {
-        setIsLoading(false);
-      }
-      return;
-    }
-
     try {
-      const response = await axios.get(
-        import.meta.env.VITE_BACKEND_URL + "/api/products/search/" + value
-      );
-      setProducts(response.data);
+      if (value.length === 0) {
+        // Show all products if search is cleared
+        const res = await api.get("/products");
+        setProducts(res.data);
+      } else {
+        const response = await api.get(`/products/search/${value}`);
+        setProducts(response.data);
+      }
     } catch (error) {
       toast.error("Error fetching products");
       console.error(error);

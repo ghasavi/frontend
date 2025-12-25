@@ -1,7 +1,8 @@
-import axios from "axios";
 import { useState } from "react";
 import toast from "react-hot-toast";
 import { useNavigate } from "react-router-dom";
+import api from "../utils/axios";
+// ✅ use your axios instance
 
 export default function RegisterPage() {
   const [username, setUsername] = useState("");
@@ -10,16 +11,15 @@ export default function RegisterPage() {
   const navigate = useNavigate();
 
   async function handleRegister() {
-    try {
-      await axios.post(import.meta.env.VITE_BACKEND_URL + "/api/users", {
-        username, // <-- updated
-        email,
-        password
-      });
+    if (!username || !email || !password)
+      return toast.error("All fields are required");
 
+    try {
+      await api.post("/users", { username, email, password });
       toast.success("Registration Successful");
       navigate("/login");
     } catch (e) {
+      console.error(e);
       toast.error(e.response?.data?.message || "Registration Failed");
     }
   }
@@ -29,24 +29,25 @@ export default function RegisterPage() {
       <div className="w-[50%] h-full"></div>
       <div className="w-[50%] h-full flex justify-center items-center">
         <div className="w-[500px] h-[600px] backdrop-blur-md rounded-[20px] shadow-xl flex flex-col justify-center items-center">
-
           <input
-            onChange={(e) => setUsername(e.target.value)}
-            value={username}
+            type="text"
             placeholder="Username"
+            value={username}
+            onChange={(e) => setUsername(e.target.value)}
             className="w-[300px] h-[50px] border border-[#c3efe9] rounded-[20px] my-[10px] px-4"
           />
           <input
-            onChange={(e) => setEmail(e.target.value)}
-            value={email}
+            type="email"
             placeholder="Email"
+            value={email}
+            onChange={(e) => setEmail(e.target.value)}
             className="w-[300px] h-[50px] border border-[#c3efe9] rounded-[20px] my-[10px] px-4"
           />
           <input
-            onChange={(e) => setPassword(e.target.value)}
-            value={password}
             type="password"
             placeholder="Password"
+            value={password}
+            onChange={(e) => setPassword(e.target.value)}
             className="w-[300px] h-[50px] border border-[#c3efe9] rounded-[20px] my-[10px] px-4"
           />
 

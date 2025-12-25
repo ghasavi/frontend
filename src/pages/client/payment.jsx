@@ -1,14 +1,12 @@
 import { useState } from "react";
 import { loadStripe } from "@stripe/stripe-js";
 import { Elements, CardElement, useStripe, useElements } from "@stripe/react-stripe-js";
-import axios from "axios";
 import toast from "react-hot-toast";
 import { useLocation, useNavigate } from "react-router-dom";
+import api from "../../utils/axios"; // ✅ use your axios instance
 
 // Stripe public key
 const stripePromise = loadStripe(import.meta.env.VITE_STRIPE_PUB_KEY);
-
-// …imports stay the same
 
 function CheckoutForm() {
   const stripe = useStripe();
@@ -27,13 +25,11 @@ function CheckoutForm() {
 
     try {
       // 1️⃣ Create Stripe payment intent
-      const { data } = await axios.post(
-        import.meta.env.VITE_BACKEND_URL + "/api/payment/create-payment-intent",
-        { amount: orderTotal } // rupees
-      );
+      const { data } = await api.post("/payment/create-payment-intent", {
+        amount: orderTotal, // in rupees
+      });
 
-      console.log("Payment intent response:", data); // <-- add this
-      const clientSecret = data.client_secret; // matches backend now
+      const clientSecret = data.client_secret;
 
       // 2️⃣ Confirm card payment
       const result = await stripe.confirmCardPayment(clientSecret, {
@@ -52,37 +48,19 @@ function CheckoutForm() {
         toast.success("Payment successful!");
 
         // Save order to backend
-        const token = localStorage.getItem("token");
-        await axios.post(
-          import.meta.env.VITE_BACKEND_URL + "/api/orders",
-          {
-            orderId: result.paymentIntent.id,
-            email: email || "guest@example.com",
-            name,
-            phone,
-            address,
-            status: "paid",
-            labelledTotal: cart.reduce((sum, item) => sum + (item.labelledPrice || item.price) * item.qty, 0),
-            total: orderTotal,
-            products: cart.map(item => ({
-              productInfo: {
-                productId: item.productId,
-                name: item.name,
-                altNames: item.altNames || [],
-                description: item.description,
-                images: item.image ? [item.image] : [],
-                labelledPrice: item.labelledPrice || item.price,
-                price: item.price
-              },
-              quantity: item.qty
-            }))
-          },
-          {
-            headers: token ? { Authorization: "Bearer " + token } : {},
-          }
-        );
+        await api.post("/orders", {
+          name,
+          phone,
+          address,
+          email,
+          products: cart.map((item) => ({
+            productId: item.productId,
+            qty: item.qty,
+          })),
+          total: orderTotal,
+        });
 
-        console.log("Order saved successfully!");
+        toast.success("Order saved successfully!");
         navigate("/");
       }
     } catch (err) {
@@ -94,13 +72,18 @@ function CheckoutForm() {
   };
 
   return (
-    <form onSubmit={handleSubmit} className="flex flex-col gap-4 p-6 bg-white rounded-lg shadow-lg">
+    <form
+      onSubmit={handleSubmit}
+      className="flex flex-col gap-4 p-6 bg-white rounded-lg shadow-lg"
+    >
       <h2 className="text-xl font-bold">Pay Now</h2>
       <CardElement className="border p-2 rounded-md" />
       <button
         type="submit"
         disabled={!stripe || loading}
-        className={`mt-4 p-3 rounded-lg font-bold text-white ${loading ? "bg-gray-400" : "bg-accent hover:bg-secondary"}`}
+        className={`mt-4 p-3 rounded-lg font-bold text-white ${
+          loading ? "bg-gray-400" : "bg-accent hover:bg-secondary"
+        }`}
       >
         {loading ? "Processing..." : `Pay Rs.${orderTotal}`}
       </button>

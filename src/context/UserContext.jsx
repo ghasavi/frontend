@@ -1,4 +1,5 @@
 import { createContext, useState, useEffect } from "react";
+import api from "../utils/axios";
 
 export const UserContext = createContext();
 
@@ -7,7 +8,6 @@ export function UserProvider({ children }) {
   const [token, setToken] = useState(localStorage.getItem("token") || "");
   const [loading, setLoading] = useState(true);
 
-  // Fetch user if token exists
   useEffect(() => {
     async function fetchUser() {
       if (!token) {
@@ -16,12 +16,11 @@ export function UserProvider({ children }) {
       }
 
       try {
-        const res = await fetch("http://localhost:5000/api/users/me", {
-          headers: { Authorization: `Bearer ${token}` },
-        });
-        if (!res.ok) throw new Error("Failed to fetch user");
-        const data = await res.json();
-        setUser(data);
+        // Set token for Axios
+        api.defaults.headers.common["Authorization"] = `Bearer ${token}`;
+
+        const res = await api.get("/users/me");
+        setUser(res.data);
       } catch (err) {
         console.error(err);
         localStorage.removeItem("token");
@@ -39,6 +38,7 @@ export function UserProvider({ children }) {
     localStorage.setItem("token", tokenValue);
     setToken(tokenValue);
     setUser(userData);
+    api.defaults.headers.common["Authorization"] = `Bearer ${tokenValue}`;
   };
 
   const logout = () => {

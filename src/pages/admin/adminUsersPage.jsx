@@ -1,5 +1,5 @@
-import axios from "axios";
 import { useEffect, useState } from "react";
+import api from "../../utils/axios"; // centralized axios
 import Loading from "../../components/loading";
 import toast from "react-hot-toast";
 
@@ -8,44 +8,42 @@ export default function AdminUsersPage() {
   const [isLoading, setIsLoading] = useState(true);
   const [updatingUserId, setUpdatingUserId] = useState(null);
 
-  useEffect(() => {
-    const token = localStorage.getItem("token");
-
-    if (!token) {
-      alert("Please login first");
-      return;
+  // fetch all users
+  const fetchUsers = async () => {
+    try {
+      const res = await api.get("/api/users/all");
+      setUsers(res.data || []);
+    } catch (err) {
+      console.error(err);
+      toast.error("Failed to fetch users");
+    } finally {
+      setIsLoading(false);
     }
+  };
 
-    axios
-      .get(import.meta.env.VITE_BACKEND_URL + "/api/users/all", {
-        headers: {
-          Authorization: "Bearer " + token,
-        },
-      })
-      .then((res) => {
-        setUsers(res.data);
-        setIsLoading(false);
-      })
-      .catch((err) => {
-        console.error(err);
-        toast.error("Failed to fetch users");
-        setIsLoading(false);
-      });
+  useEffect(() => {
+    fetchUsers();
   }, []);
 
+  // toggle block/unblock
   const toggleBlock = async (userId, currentStatus) => {
-    if (!window.confirm(`Are you sure you want to ${currentStatus ? "unblock" : "block"} this user?`)) return;
+    const confirm = window.confirm(
+      `Are you sure you want to ${currentStatus ? "unblock" : "block"} this user?`
+    );
+    if (!confirm) return;
+
     setUpdatingUserId(userId);
-    const token = localStorage.getItem("token");
 
     try {
-      await axios.put(
-        `${import.meta.env.VITE_BACKEND_URL}/api/users/block/${userId}`,
-        { block: !currentStatus },
-        { headers: { Authorization: `Bearer ${token}` } }
+      await api.put(`/api/users/block/${userId}`, { block: !currentStatus });
+      setUsers((prev) =>
+        prev.map((u) =>
+          u._id === userId ? { ...u, isBlock: !currentStatus } : u
+        )
       );
-      toast.success(`User ${!currentStatus ? "blocked" : "unblocked"} successfully`);
-      setUsers(users.map(u => u._id === userId ? { ...u, isBlock: !currentStatus } : u));
+      toast.success(
+        `User ${!currentStatus ? "blocked" : "unblocked"} successfully`
+      );
     } catch (err) {
       console.error(err);
       toast.error("Failed to update user status");
@@ -76,16 +74,33 @@ export default function AdminUsersPage() {
           </thead>
           <tbody>
             {users.map((user, index) => (
-              <tr key={index} className={`${index % 2 === 0 ? "bg-[var(--color-primary)]" : "bg-gray-100"}`}>
+              <tr
+                key={user._id}
+                className={`${
+                  index % 2 === 0 ? "bg-[var(--color-primary)]" : "bg-gray-100"
+                }`}
+              >
                 <td className="py-2 px-2">
-                  <img src={user.img || "/user.png"} alt="user" className="w-10 h-10 rounded-full mx-auto object-cover" />
+                  <img
+                    src={user.img || "/user.png"}
+                    alt="user"
+                    className="w-10 h-10 rounded-full mx-auto object-cover"
+                  />
                 </td>
                 <td className="py-2 px-2">{user.firstName}</td>
                 <td className="py-2 px-2">{user.email}</td>
-                <td className={`py-2 px-2 font-semibold ${user.role === "admin" ? "text-red-600" : "text-blue-600"}`}>
+                <td
+                  className={`py-2 px-2 font-semibold ${
+                    user.role === "admin" ? "text-red-600" : "text-blue-600"
+                  }`}
+                >
                   {user.role.toUpperCase()}
                 </td>
-                <td className={`py-2 px-2 font-semibold ${user.isBlock ? "text-red-500" : "text-green-600"}`}>
+                <td
+                  className={`py-2 px-2 font-semibold ${
+                    user.isBlock ? "text-red-500" : "text-green-600"
+                  }`}
+                >
                   {user.isBlock ? "BLOCKED" : "ACTIVE"}
                 </td>
                 <td className="py-2 px-2">
@@ -93,7 +108,9 @@ export default function AdminUsersPage() {
                     disabled={updatingUserId === user._id}
                     onClick={() => toggleBlock(user._id, user.isBlock)}
                     className={`px-3 py-1 rounded font-semibold ${
-                      user.isBlock ? "bg-green-500 text-white hover:bg-green-600" : "bg-red-500 text-white hover:bg-red-600"
+                      user.isBlock
+                        ? "bg-green-500 text-white hover:bg-green-600"
+                        : "bg-red-500 text-white hover:bg-red-600"
                     }`}
                   >
                     {user.isBlock ? "Unblock" : "Block"}

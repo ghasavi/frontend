@@ -1,6 +1,6 @@
 import { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
-import axios from "axios";
+import api from "../../utils/axios"; // centralized API instance
 
 export default function AdminDashboard() {
 	const navigate = useNavigate();
@@ -9,8 +9,8 @@ export default function AdminDashboard() {
 	const [loading, setLoading] = useState(true);
 
 	useEffect(() => {
-		axios
-			.get(`${import.meta.env.VITE_BACKEND_URL}/api/products`)
+		api
+			.get("/api/products")
 			.then((res) => {
 				setProducts(res.data || []);
 				setLoading(false);
@@ -25,18 +25,14 @@ export default function AdminDashboard() {
 		if (!window.confirm("Delete this anime pic?")) return;
 
 		try {
-			await axios.delete(
-				`${import.meta.env.VITE_BACKEND_URL}/api/products/${id}`
-			);
+			await api.delete(`/api/products/${id}`);
 			setProducts((prev) => prev.filter((p) => p._id !== id));
 		} catch (err) {
 			console.error(err);
 		}
 	};
 
-	if (loading) {
-		return <div className="p-10 text-xl">Loading admin data...</div>;
-	}
+	if (loading) return <div className="p-10 text-xl">Loading admin data...</div>;
 
 	return (
 		<div className="min-h-screen bg-gray-100 p-6">
@@ -77,9 +73,7 @@ export default function AdminDashboard() {
 
 			{/* PRODUCTS TABLE */}
 			<div className="bg-white rounded-2xl shadow p-6">
-				<h2 className="text-2xl font-semibold mb-4">
-					Anime Pics Inventory
-				</h2>
+				<h2 className="text-2xl font-semibold mb-4">Anime Pics Inventory</h2>
 
 				<div className="overflow-x-auto">
 					<table className="w-full text-left border-collapse">
@@ -95,10 +89,7 @@ export default function AdminDashboard() {
 
 						<tbody>
 							{products.map((product) => (
-								<tr
-									key={product._id}
-									className="border-b hover:bg-gray-50"
-								>
+								<tr key={product._id} className="border-b hover:bg-gray-50">
 									<td className="p-3">
 										<img
 											src={product.images?.[0] || ""}
@@ -106,19 +97,11 @@ export default function AdminDashboard() {
 											className="w-16 h-16 object-cover rounded-xl"
 										/>
 									</td>
-
-									<td className="p-3 font-semibold">
-										{product.name}
-									</td>
-
+									<td className="p-3 font-semibold">{product.name}</td>
 									<td className="p-3 text-accent font-bold">
 										${Number(product.price).toFixed(2)}
 									</td>
-
-									<td className="p-3">
-										{product.stock ?? "∞"}
-									</td>
-
+									<td className="p-3">{product.stock ?? "∞"}</td>
 									<td className="p-3 flex gap-2">
 										<button
 											onClick={() =>
@@ -128,7 +111,6 @@ export default function AdminDashboard() {
 										>
 											Edit
 										</button>
-
 										<button
 											onClick={() => deleteProduct(product._id)}
 											className="px-4 py-2 bg-red-500 text-white rounded-xl hover:bg-red-600"
@@ -142,12 +124,10 @@ export default function AdminDashboard() {
 					</table>
 				</div>
 			</div>
-
 		</div>
 	);
 }
 
-/* 🔹 CLICKABLE STAT CARD */
 function StatCard({ title, value, onClick }) {
 	return (
 		<div

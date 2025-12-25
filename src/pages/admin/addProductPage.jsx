@@ -2,7 +2,7 @@ import { useState } from "react";
 import toast from "react-hot-toast";
 import { Link, useNavigate } from "react-router-dom";
 import mediaUpload from "../../utils/mediaUpload";
-import axios from "axios";
+import api from "../../utils/axios";
 
 export default function AddProductPage() {
   const navigate = useNavigate();
@@ -137,11 +137,7 @@ export default function AddProductPage() {
         year,
       };
 
-      await axios.post(
-        import.meta.env.VITE_BACKEND_URL + "/api/products",
-        product,
-        { headers: { Authorization: "Bearer " + token } }
-      );
+      await api.post("/api/products", product);
 
       toast.success("Product added 🔥");
       navigate("/admin/products");
