@@ -11,64 +11,49 @@ export default function EditProfile() {
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
-    const token = localStorage.getItem("token");
-    if (!token) return navigate("/login");
-
-    async function fetchUser() {
-      try {
-        const res = await fetch("http://localhost:5000/api/users/me", {
-          headers: { Authorization: `Bearer ${token}` },
-        });
-        if (!res.ok) throw new Error("Failed to fetch user");
-        const data = await res.json();
-        setUser(data);
-        setFirstName(data.firstName || "");
-        setLastName(data.lastName || "");
-        setLoading(false);
-      } catch (err) {
-        console.error(err);
-        toast.error("Failed to load profile. Redirecting to login...");
-        setTimeout(() => navigate("/login"), 2000);
-      }
+    // Simulate fetching user from localStorage
+    const storedUser = JSON.parse(localStorage.getItem("mockUser"));
+    if (!storedUser) {
+      toast.error("No user found. Redirecting...");
+      setTimeout(() => navigate("/login"), 1000);
+      return;
     }
-
-    fetchUser();
-  }, []);
+    setUser(storedUser);
+    setFirstName(storedUser.firstName || "");
+    setLastName(storedUser.lastName || "");
+    setLoading(false);
+  }, [navigate]);
 
   const handleFileChange = (e) => {
     setImgFile(e.target.files[0]);
   };
 
-  const handleSave = async () => {
-    const token = localStorage.getItem("token");
-    if (!token) return navigate("/login");
-
-    const formData = new FormData();
-    formData.append("firstName", firstName);
-    formData.append("lastName", lastName);
-    if (imgFile) formData.append("img", imgFile);
-
-    try {
-      const res = await fetch("http://localhost:5000/api/users/me", {
-        method: "PUT",
-        headers: {
-          Authorization: `Bearer ${token}`,
-        },
-        body: formData,
-      });
-
-      if (!res.ok) throw new Error("Failed to update profile");
-      const data = await res.json();
-      toast.success("Profile updated!");
-      setUser(data.user);
-      navigate("/profile"); // go back to profile page
-    } catch (err) {
-      console.error(err);
-      toast.error("Failed to update profile");
+  const handleSave = () => {
+    if (!firstName.trim() || !lastName.trim()) {
+      toast.error("First & last name are required");
+      return;
     }
+
+    const updatedUser = {
+      ...user,
+      firstName,
+      lastName,
+      img: imgFile ? URL.createObjectURL(imgFile) : user.img,
+    };
+
+    // Save to localStorage to simulate backend
+    localStorage.setItem("mockUser", JSON.stringify(updatedUser));
+    setUser(updatedUser);
+    toast.success("Profile updated!");
+    navigate("/profile");
   };
 
-  if (loading) return <div className="min-h-screen flex items-center justify-center text-white">Loading...</div>;
+  if (loading)
+    return (
+      <div className="min-h-screen flex items-center justify-center text-white">
+        Loading...
+      </div>
+    );
 
   return (
     <div className="min-h-screen bg-gradient-to-br from-black via-zinc-900 to-black text-white px-6 py-20 flex flex-col items-center">

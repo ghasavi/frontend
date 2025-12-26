@@ -11,7 +11,8 @@ export default function AdminUsersPage() {
   // fetch all users
   const fetchUsers = async () => {
     try {
-      const res = await api.get("/api/users/all");
+      // ✅ remove extra "/api"
+      const res = await api.get("/users/all"); 
       setUsers(res.data || []);
     } catch (err) {
       console.error(err);
@@ -35,7 +36,8 @@ export default function AdminUsersPage() {
     setUpdatingUserId(userId);
 
     try {
-      await api.put(`/api/users/block/${userId}`, { block: !currentStatus });
+      // ✅ remove extra "/api"
+      await api.put(`/users/block/${userId}`, { block: !currentStatus });
       setUsers((prev) =>
         prev.map((u) =>
           u._id === userId ? { ...u, isBlock: !currentStatus } : u

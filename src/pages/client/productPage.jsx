@@ -2,28 +2,40 @@ import { useEffect, useState } from "react";
 import ProductCard from "../../components/productCard";
 import Loading from "../../components/loading";
 import toast from "react-hot-toast";
-import api from "../../utils/axios"; // ✅ use your axios instance
+import api from "../../utils/axios"; // ✅ your axios instance
 
 export default function ProductPage() {
   const [products, setProducts] = useState([]);
   const [isLoading, setIsLoading] = useState(true);
   const [query, setQuery] = useState("");
 
+  // Helper to normalize API response
+  const normalizeProducts = (data) => {
+    if (Array.isArray(data)) return data;
+    if (data?.products && Array.isArray(data.products)) return data.products;
+    return [];
+  };
+
   // Fetch all products initially
   useEffect(() => {
-    if (isLoading && query.length === 0) {
-      api
-        .get("/products")
-        .then((res) => {
-          setProducts(res.data);
-          setIsLoading(false);
-        })
-        .catch((err) => {
-          toast.error("Error fetching products");
-          console.error(err);
-          setIsLoading(false);
+    const fetchProducts = async () => {
+      try {
+        const res = await api.get("/products", {
+          headers: {
+            "ngrok-skip-browser-warning": "1", // bypass Ngrok free plan warning page
+          },
         });
-    }
+        console.log("Fetched products:", res.data); // debug log
+        setProducts(normalizeProducts(res.data));
+      } catch (err) {
+        toast.error("Error fetching products");
+        console.error("Fetch products error:", err);
+      } finally {
+        setIsLoading(false);
+      }
+    };
+
+    if (isLoading && query.length === 0) fetchProducts();
   }, [isLoading, query]);
 
   // Handle search input
@@ -33,17 +45,21 @@ export default function ProductPage() {
     setIsLoading(true);
 
     try {
+      let response;
       if (value.length === 0) {
-        // Show all products if search is cleared
-        const res = await api.get("/products");
-        setProducts(res.data);
+        response = await api.get("/products", {
+          headers: { "ngrok-skip-browser-warning": "1" },
+        });
       } else {
-        const response = await api.get(`/products/search/${value}`);
-        setProducts(response.data);
+        response = await api.get(`/products/search/${value}`, {
+          headers: { "ngrok-skip-browser-warning": "1" },
+        });
       }
+      console.log("Search response:", response.data); // debug log
+      setProducts(normalizeProducts(response.data));
     } catch (error) {
       toast.error("Error fetching products");
-      console.error(error);
+      console.error("Search products error:", error);
     } finally {
       setIsLoading(false);
     }

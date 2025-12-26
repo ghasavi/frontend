@@ -137,7 +137,8 @@ export default function AddProductPage() {
         year,
       };
 
-      await api.post("/api/products", product);
+      // ✅ removed extra /api
+      await api.post("/products", product);
 
       toast.success("Product added 🔥");
       navigate("/admin/products");
@@ -151,15 +152,13 @@ export default function AddProductPage() {
   return (
     <div className="w-full max-w-xl mx-auto bg-white p-6 rounded-xl shadow space-y-3">
 
-      {[
-        ["Product ID", productId, setProductId, "productId"],
+      {[["Product ID", productId, setProductId, "productId"],
         ["Name", name, setName, "name"],
         ["Alt Names (comma separated)", altNames, setAltNames, "altNames"],
         ["Description", description, setDescription, "description", true],
         ["Size", size, setSize, "size"],
         ["Medium", medium, setMedium, "medium"],
-        ["Material", material, setMaterial, "material"],
-      ].map(([label, value, setter, key, textarea]) => (
+        ["Material", material, setMaterial, "material"]].map(([label, value, setter, key, textarea]) => (
         <div key={key}>
           {textarea ? (
             <textarea

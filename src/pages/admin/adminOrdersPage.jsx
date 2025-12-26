@@ -13,7 +13,8 @@ export default function AdminOrdersPage() {
   // fetch all orders
   const fetchOrders = async () => {
     try {
-      const res = await api.get("/api/orders");
+      // ✅ removed extra /api
+      const res = await api.get("/orders");
       setOrders(res.data || []);
     } catch (err) {
       console.error(err);
@@ -35,7 +36,8 @@ export default function AdminOrdersPage() {
     if (!confirmDelete) return;
 
     try {
-      await api.delete(`/api/orders/${orderId}`);
+      // ✅ removed extra /api
+      await api.delete(`/orders/${orderId}`);
       setOrders((prev) => prev.filter((o) => o.orderId !== orderId));
       toast.success("Order deleted");
     } catch (err) {
@@ -47,7 +49,8 @@ export default function AdminOrdersPage() {
   // update order status
   const updateStatus = async (orderId, status) => {
     try {
-      await api.put(`/api/orders/${orderId}/${status}`);
+      // ✅ removed extra /api
+      await api.put(`/orders/${orderId}/${status}`);
       setOrders((prev) =>
         prev.map((o) => (o.orderId === orderId ? { ...o, status } : o))
       );
@@ -79,18 +82,10 @@ export default function AdminOrdersPage() {
 
             <div className="grid grid-cols-2 gap-4">
               <div>
-                <p>
-                  <span className="font-semibold">Name:</span> {activeOrder.name}
-                </p>
-                <p>
-                  <span className="font-semibold">Email:</span> {activeOrder.email}
-                </p>
-                <p>
-                  <span className="font-semibold">Phone:</span> {activeOrder.phone}
-                </p>
-                <p>
-                  <span className="font-semibold">Address:</span> {activeOrder.address}
-                </p>
+                <p><span className="font-semibold">Name:</span> {activeOrder.name}</p>
+                <p><span className="font-semibold">Email:</span> {activeOrder.email}</p>
+                <p><span className="font-semibold">Phone:</span> {activeOrder.phone}</p>
+                <p><span className="font-semibold">Address:</span> {activeOrder.address}</p>
               </div>
 
               <div>
@@ -118,17 +113,8 @@ export default function AdminOrdersPage() {
                     <option value="returned">Returned</option>
                   </select>
                 </p>
-                <p>
-                  <span className="font-semibold">Date:</span>{" "}
-                  {new Date(activeOrder.date).toLocaleDateString("en-GB")}
-                </p>
-                <p>
-                  <span className="font-semibold">Total:</span>{" "}
-                  {activeOrder.total.toLocaleString("en-LK", {
-                    style: "currency",
-                    currency: "LKR",
-                  })}
-                </p>
+                <p><span className="font-semibold">Date:</span> {new Date(activeOrder.date).toLocaleDateString("en-GB")}</p>
+                <p><span className="font-semibold">Total:</span> {activeOrder.total.toLocaleString("en-LK", { style: "currency", currency: "LKR" })}</p>
               </div>
             </div>
 
@@ -154,35 +140,19 @@ export default function AdminOrdersPage() {
                       />
                     </td>
                     <td>{item.productInfo.name}</td>
-                    <td>
-                      {item.productInfo.price.toLocaleString("en-LK", {
-                        style: "currency",
-                        currency: "LKR",
-                      })}
-                    </td>
+                    <td>{item.productInfo.price.toLocaleString("en-LK", { style: "currency", currency: "LKR" })}</td>
                     <td>{item.quantity}</td>
-                    <td>
-                      {(item.productInfo.price * item.quantity).toLocaleString("en-LK", {
-                        style: "currency",
-                        currency: "LKR",
-                      })}
-                    </td>
+                    <td>{(item.productInfo.price * item.quantity).toLocaleString("en-LK", { style: "currency", currency: "LKR" })}</td>
                   </tr>
                 ))}
               </tbody>
             </table>
 
             <div className="flex justify-end mt-4 gap-2">
-              <button
-                onClick={() => setIsModalOpen(false)}
-                className="px-4 py-2 bg-[var(--color-accent)] text-white rounded hover:bg-[var(--color-secondary)] transition"
-              >
+              <button onClick={() => setIsModalOpen(false)} className="px-4 py-2 bg-[var(--color-accent)] text-white rounded hover:bg-[var(--color-secondary)] transition">
                 Close
               </button>
-              <button
-                onClick={() => window.print()}
-                className="px-4 py-2 bg-[var(--color-accent)] text-white rounded hover:bg-[var(--color-secondary)] transition"
-              >
+              <button onClick={() => window.print()} className="px-4 py-2 bg-[var(--color-accent)] text-white rounded hover:bg-[var(--color-secondary)] transition">
                 Print
               </button>
             </div>
@@ -218,9 +188,7 @@ export default function AdminOrdersPage() {
               <td>{order.name}</td>
               <td>{order.email}</td>
               <td>{order.phone}</td>
-              <td>
-                {order.total.toLocaleString("en-LK", { style: "currency", currency: "LKR" })}
-              </td>
+              <td>{order.total.toLocaleString("en-LK", { style: "currency", currency: "LKR" })}</td>
               <td>{new Date(order.date).toLocaleDateString("en-GB")}</td>
               <td className={`font-semibold ${
                 order.status === "pending" ? "text-yellow-500" :

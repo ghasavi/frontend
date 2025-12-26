@@ -13,7 +13,7 @@ export default function AdminProductsPage() {
   // fetch products
   const fetchProducts = async () => {
     try {
-      const res = await api.get("/api/products");
+      const res = await api.get("/products");
       setProducts(res.data || []);
     } catch (err) {
       console.error(err);
@@ -35,7 +35,7 @@ export default function AdminProductsPage() {
     if (!confirmDelete) return;
 
     try {
-      await api.delete(`/api/products/${productId}`);
+      await api.delete(`/products/${productId}`);
       toast.success("Product deleted successfully");
       setProducts((prev) => prev.filter((p) => p.productId !== productId));
     } catch (err) {

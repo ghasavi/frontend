@@ -1,12 +1,5 @@
-import {
-  Link,
-  Route,
-  Routes,
-  useLocation,
-  useNavigate,
-} from "react-router-dom";
+import { Link, Route, Routes, useLocation, useNavigate } from "react-router-dom";
 import { useEffect, useState } from "react";
-import AdminDashboard from "./adminDashboard";
 import ProductsPage from "./productsPage";
 import AddProductsPage from "./addProductsPage";
 import EditProductPage from "./editProductPage";
@@ -20,30 +13,31 @@ function AdminHome() {
   const navigate = useNavigate();
   const location = useLocation();
   const user = JSON.parse(localStorage.getItem("user"));
-
   const [isAdmin, setIsAdmin] = useState(false);
 
+  // Check if logged-in user is admin
   useEffect(() => {
     (async () => {
       try {
-        const response = await api.get("/api/auth/check-admin");
-        if (response.status === 200 && response.data.message === "Authorized access") {
-          setIsAdmin(true);
-        }
+        const res = await api.get("/users/check-admin"); // correct backend route
+        if (res.status === 200 && res.data.ok) setIsAdmin(true);
+        else navigate("/auth"); // redirect non-admins
       } catch (err) {
+        console.error("Admin check failed:", err);
         navigate("/auth");
       }
     })();
-  }, []);
+  }, [navigate]);
 
-  if (!isAdmin) return null;
+  if (!isAdmin) return null; // don't render until admin check passes
 
   return (
     <div className="flex min-h-screen bg-gray-50">
+      {/* Sidebar */}
       <aside className="relative h-screen w-2/12 bg-white p-8 drop-shadow-2xl">
         <div className="flex flex-col items-center gap-4">
           <img
-            src={user?.avatar}
+            src={user?.avatar || "/defaultUser.png"}
             alt="user avatar"
             className="w-16 h-16 rounded-full object-cover object-center"
           />
@@ -113,9 +107,10 @@ function AdminHome() {
         </Link>
       </aside>
 
+      {/* Main Content */}
       <main className="flex-1 overflow-y-auto p-8 bg-gray-50">
         <Routes>
-          <Route path="/dashboard" element={<AdminDashboard />} />
+          <Route path="/dashboard" element={<div>Welcome to Admin Dashboard</div>} />
           <Route path="/products" element={<ProductsPage />} />
           <Route path="/add-products" element={<AddProductsPage />} />
           <Route path="/edit-products/:id" element={<EditProductPage />} />

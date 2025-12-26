@@ -16,13 +16,10 @@ export function UserProvider({ children }) {
       }
 
       try {
-        // Set token for Axios
-        api.defaults.headers.common["Authorization"] = `Bearer ${token}`;
-
-        const res = await api.get("/users/me");
+        const res = await api.get("/users/me"); // fetch current user
         setUser(res.data);
       } catch (err) {
-        console.error(err);
+        console.error("USER FETCH ERROR:", err);
         localStorage.removeItem("token");
         setToken("");
         setUser(null);
@@ -38,14 +35,13 @@ export function UserProvider({ children }) {
     localStorage.setItem("token", tokenValue);
     setToken(tokenValue);
     setUser(userData);
-    api.defaults.headers.common["Authorization"] = `Bearer ${tokenValue}`;
   };
 
   const logout = () => {
     localStorage.removeItem("token");
     setToken("");
     setUser(null);
-    window.location.href = "/";
+    window.location.href = "/login";
   };
 
   return (
