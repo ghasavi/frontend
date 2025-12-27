@@ -8,6 +8,9 @@ import AboutPage from "./client/aboutPage";
 import NotFoundPage from "./client/notFoundPage";
 import ProfilePage from "./client/profile";
 import EditProfile from "./client/editProfile";
+import MyOrders from "./client/myOrders";
+import MyReviews from "./client/myReviews";
+import MyWishlistPage from "./client/myWishlist";
 import Footer from "../components/footer";
 
 function LandingPage() {
@@ -83,6 +86,9 @@ export default function HomePage() {
 					<Route path="/checkout" element={<CheckoutPage />} />
 					<Route path="/profile" element={<ProfilePage />} />
 					<Route path="/editProfile" element={<EditProfile />} />
+					<Route path="/myorders" element={<MyOrders />} />
+					<Route path="/reviews" element={<MyReviews />} />
+					<Route path="/wishlist" element={<MyWishlistPage />} />
 					<Route path="/overview/:id" element={<ProductOverviewPage />} />
 					<Route path="*" element={<NotFoundPage />} />
 				</Routes>

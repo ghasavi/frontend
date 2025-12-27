@@ -62,16 +62,16 @@ export default function Header() {
             <div className="absolute right-0 top-12 w-56 bg-white shadow-xl rounded-xl border z-50">
               <ul className="flex flex-col text-sm font-medium">
                 <li onClick={() => navigate("/profile")} className="px-4 py-3 hover:bg-gray-100 cursor-pointer">
-                  Your Profile
+                  Profile
                 </li>
-                <li onClick={() => navigate("/orders")} className="px-4 py-3 hover:bg-gray-100 cursor-pointer">
-                  Your Orders
+                <li onClick={() => navigate("/myorders")} className="px-4 py-3 hover:bg-gray-100 cursor-pointer">
+                  My Orders
                 </li>
-                <li onClick={() => navigate("/favourites")} className="px-4 py-3 hover:bg-gray-100 cursor-pointer">
-                  Your Favourites
+                <li onClick={() => navigate("/wishlist")} className="px-4 py-3 hover:bg-gray-100 cursor-pointer">
+                  My Wishlist
                 </li>
                 <li onClick={() => navigate("/reviews")} className="px-4 py-3 hover:bg-gray-100 cursor-pointer">
-                  Your Reviews
+                  My Reviews
                 </li>
                 <li
                   onClick={logout}

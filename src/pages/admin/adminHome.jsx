@@ -4,6 +4,7 @@ import ProductsPage from "./productsPage";
 import AddProductsPage from "./addProductsPage";
 import EditProductPage from "./editProductPage";
 import AdminUsersPage from "./adminUsersPage";
+import AdminReviews from "./adminReviewsPage";
 import OrdersPage from "./ordersPage";
 import DisplayOrderPage from "./displayOrderPage";
 import NotFoundPage from "../client/notFoundPage";
@@ -99,6 +100,7 @@ function AdminHome() {
             </Link>
           </li>
         </ul>
+        
 
         <Link to="/auth">
           <p className="absolute bottom-4 left-1/2 w-10/12 -translate-x-1/2 rounded-md bg-red-400 px-4 py-2 text-center text-lg font-semibold text-white hover:bg-red-500">
@@ -115,6 +117,7 @@ function AdminHome() {
           <Route path="/add-products" element={<AddProductsPage />} />
           <Route path="/edit-products/:id" element={<EditProductPage />} />
           <Route path="/users" element={<AdminUsersPage />} />
+          <Route path="/reviews" element={<AdminReviews />} />
           <Route path="/orders" element={<OrdersPage />} />
           <Route path="/order-info/:id" element={<DisplayOrderPage />} />
           <Route path="*" element={<NotFoundPage />} />

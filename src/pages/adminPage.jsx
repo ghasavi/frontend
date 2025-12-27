@@ -10,6 +10,8 @@ import AdminProductsPage from "./admin/productsPage";
 import EditProductPage from "./admin/editProductPage";
 import AdminOrdersPage from "./admin/adminOrdersPage";
 import AdminUsersPage from "./admin/adminUsersPage";
+import AdminReviewsPage from "./admin/adminReviewsPage";
+import NotFoundPage from "./client/notFoundPage";
 
 export default function AdminPage() {
   const location = useLocation();
@@ -104,8 +106,8 @@ export default function AdminPage() {
           <Route path="/edit-product/:id" element={<EditProductPage />} />
           <Route path="/users" element={<AdminUsersPage />} />
           <Route path="/orders" element={<AdminOrdersPage />} />
-          <Route path="/reviews" element={<h1>Reviews</h1>} />
-          <Route path="*" element={<h1>Page Not Found</h1>} />
+          <Route path="/reviews" element={<AdminReviewsPage />} />
+          <Route path="*" element={<NotFoundPage />} />
         </Routes>
       </main>
     </div>

@@ -1,14 +1,18 @@
-import { useEffect, useState } from "react";
+import { useEffect, useState, useContext } from "react";
 import { useNavigate, useParams } from "react-router-dom";
 import toast from "react-hot-toast";
 import api from "../../utils/axios";
 import ImageSlider from "../../components/imageSlider";
 import Loading from "../../components/loading";
 import { addToCart } from "../../utils/cart";
+import { addToWishlist } from "../../utils/wishlist";
+import { UserContext } from "../../context/UserContext";
 
 export default function ProductOverviewPage() {
   const { id: productId } = useParams();
   const navigate = useNavigate();
+  const { user } = useContext(UserContext);
+  const wishlistKey = user?.email ? `wishlist_${user.email}` : null;
 
   const [status, setStatus] = useState("loading"); // loading | success | error
   const [product, setProduct] = useState(null);
@@ -26,31 +30,20 @@ export default function ProductOverviewPage() {
     const fetchProduct = async () => {
       try {
         const res = await api.get(`/products/${productId}`);
-
-        // detect if server returned HTML instead of JSON
         if (!res.data || typeof res.data !== "object" || Array.isArray(res.data)) {
-          console.error("Invalid product data:", res.data);
           setStatus("error");
-          setErrorMessage(
-            "Could not fetch product. Backend might be offline or the URL is wrong."
-          );
+          setErrorMessage("Invalid product data from server");
           return;
         }
-
         setProduct(res.data);
         setStatus("success");
       } catch (err) {
         console.error("Failed to fetch product:", err);
-
-        // check if response is HTML (ngrok / server error)
-        if (err.response && err.response.data && typeof err.response.data === "string" && err.response.data.includes("<!DOCTYPE html>")) {
-          setErrorMessage(
-            "Ngrok tunnel might be expired. Update your backend URL and restart the server."
-          );
-        } else {
-          setErrorMessage("Error fetching product details");
-        }
-
+        setErrorMessage(
+          err.response?.data?.includes("<!DOCTYPE html>")
+            ? "Ngrok tunnel might be expired. Update backend URL."
+            : "Error fetching product details"
+        );
         setStatus("error");
       }
     };
@@ -70,7 +63,6 @@ export default function ProductOverviewPage() {
         console.error("Failed to fetch related products:", err);
       }
     };
-
     fetchRelated();
   }, [productId]);
 
@@ -147,7 +139,7 @@ export default function ProductOverviewPage() {
             {/* ACTIONS */}
             <div className="w-full flex flex-col md:flex-row gap-2 justify-center items-center mt-4">
               <button
-                className={`w-[200px] h-[50px] mx-4 rounded-2xl transition-all duration-300 ${isOutOfStock ? "bg-gray-400 cursor-not-allowed" : "bg-accent text-white cursor-pointer hover:bg-accent/80"}`}
+                className={`w-[200px] h-[50px] mx-4 rounded-2xl transition-all duration-300 ${isOutOfStock ? "bg-gray-400 cursor-not-allowed" : "bg-accent text-white hover:bg-accent/80"}`}
                 onClick={() => {
                   if (isOutOfStock) return toast.error("Out of stock 😭");
                   addToCart(product, 1);
@@ -158,7 +150,7 @@ export default function ProductOverviewPage() {
               </button>
 
               <button
-                className={`w-[200px] h-[50px] mx-4 rounded-2xl transition-all duration-300 ${isOutOfStock ? "bg-gray-400 cursor-not-allowed" : "bg-accent text-white cursor-pointer hover:bg-accent/80"}`}
+                className={`w-[200px] h-[50px] mx-4 rounded-2xl transition-all duration-300 ${isOutOfStock ? "bg-gray-400 cursor-not-allowed" : "bg-accent text-white hover:bg-accent/80"}`}
                 onClick={() => {
                   if (isOutOfStock) return toast.error("Out of stock 😭");
                   navigate("/checkout", {
@@ -179,6 +171,18 @@ export default function ProductOverviewPage() {
               >
                 Buy Now
               </button>
+
+              <button
+                className="w-[200px] h-[50px] mx-4 rounded-2xl border-2 border-accent text-accent hover:bg-accent hover:text-white transition-all duration-300"
+                onClick={() => {
+                  if (!user) return toast.error("Login first to save wishlist 😤");
+                  const added = addToWishlist(product, wishlistKey);
+                  if (added) toast.success("Added to wishlist ❤️");
+                  else toast.error("Already in wishlist 😏");
+                }}
+              >
+                Add to Wishlist
+              </button>
             </div>
           </div>
         </div>
@@ -195,7 +199,11 @@ export default function ProductOverviewPage() {
                 className="cursor-pointer bg-white rounded-2xl shadow-md hover:shadow-xl transition-all duration-300"
                 onClick={() => navigate(`/overview/${item.productId}`)}
               >
-                <img src={Array.isArray(item.images) ? item.images[0] : ""} alt={item.name} className="w-full h-[260px] object-cover rounded-t-2xl" />
+                <img
+                  src={Array.isArray(item.images) ? item.images[0] : ""}
+                  alt={item.name}
+                  className="w-full h-[260px] object-cover rounded-t-2xl"
+                />
                 <div className="p-4 text-center">
                   <h3 className="text-xl font-semibold text-secondary">{item.name}</h3>
                   <p className="text-accent font-bold text-lg mt-2">{Number(item.price || 0).toFixed(2)}</p>
