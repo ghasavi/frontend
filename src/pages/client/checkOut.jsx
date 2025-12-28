@@ -87,12 +87,16 @@ export default function CheckoutPage() {
   const placeOrder = () => {
     if (!canPlaceOrder) return;
 
+    // Compose full address
+    const fullAddress = `${village ? village + ", " : ""}${city}, ${district}, ${province}. ${address}`;
+
+    // Navigate to Payment page with all necessary info
     navigate("/payment", {
       state: {
         cart,
         name,
         phone,
-        address: `${village ? village + ", " : ""}${city}, ${district}, ${province}. ${address}`,
+        address: fullAddress,
         orderTotal,
       },
     });
@@ -103,7 +107,6 @@ export default function CheckoutPage() {
 
       {/* LEFT SIDE FORM */}
       <div className="flex-1 flex flex-col gap-6">
-
         <div className="bg-white shadow-2xl rounded-2xl p-6">
           <h2 className="text-xl font-bold mb-4 text-secondary">Delivery Details</h2>
 
@@ -121,18 +124,11 @@ export default function CheckoutPage() {
             <div>
               <select
                 value={province}
-                onChange={(e) => {
-                  setProvince(e.target.value);
-                  setDistrict("");
-                }}
+                onChange={(e) => { setProvince(e.target.value); setDistrict(""); }}
                 className="input"
               >
                 <option value="">Select Province</option>
-                {PROVINCES.map((p) => (
-                  <option key={p.name} value={p.name}>
-                    {p.name}
-                  </option>
-                ))}
+                {PROVINCES.map((p) => <option key={p.name} value={p.name}>{p.name}</option>)}
               </select>
               {errors.province && <p className="text-red-500 text-sm">{errors.province}</p>}
             </div>
@@ -145,11 +141,7 @@ export default function CheckoutPage() {
                 disabled={!province}
               >
                 <option value="">Select District</option>
-                {districts.map((d) => (
-                  <option key={d} value={d}>
-                    {d}
-                  </option>
-                ))}
+                {districts.map((d) => <option key={d} value={d}>{d}</option>)}
               </select>
               {errors.district && <p className="text-red-500 text-sm">{errors.district}</p>}
             </div>
@@ -231,12 +223,12 @@ export default function CheckoutPage() {
 
         <button
           onClick={placeOrder}
-          disabled={!canPlaceOrder}
+          disabled={!canPlaceOrder || cart.length === 0}
           className={`w-full mt-4 py-3 rounded-xl font-bold ${
-            canPlaceOrder ? "bg-accent text-white hover:bg-secondary" : "bg-gray-400 text-gray-700 cursor-not-allowed"
+            canPlaceOrder && cart.length > 0 ? "bg-accent text-white hover:bg-secondary" : "bg-gray-400 text-gray-700 cursor-not-allowed"
           }`}
         >
-          Place Order
+          Proceed to Payment
         </button>
       </div>
     </div>

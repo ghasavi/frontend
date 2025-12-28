@@ -1,12 +1,288 @@
+/* 1️⃣ Google Fonts - MUST be first */
 @import url("https://fonts.googleapis.com/css2?family=Exile&display=swap");
 @import url('https://fonts.googleapis.com/css2?family=Exile&family=Playwrite+HU:wght@100..400&display=swap');
+@import url('https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600&display=swap');
+
+/* 2️⃣ Tailwind import AFTER fonts */
 @import "tailwindcss";
 
+/* 3️⃣ Custom CSS Variables */
+/* New darker color variables */
+:root {
+  --pixaku-darkest: #0F0E23;
+  --pixaku-dark: #19183B;
+  --pixaku-slate: #708993;
+  --pixaku-teal: #A1C2BD;
+  --pixaku-mint: #E7F2EF;
+  --pixaku-white: #FFFFFF;
+}
 
-@theme{
-    --color-primary:#FBFBFB;
-    --color-secondary:#393E46;
-    --color-accent:#483AA0;
-    --font-fancy: 'Exile', sans-serif;
-    --font-main: 'Playwrite HU' , sans-serif;
+body {
+  font-family: 'Poppins', sans-serif;
+}
+
+/* Custom gradient animation for header */
+@keyframes gradientShift {
+  0% { background-position: 0% 50%; }
+  50% { background-position: 100% 50%; }
+  100% { background-position: 0% 50%; }
+}
+
+.bg-gradient-animate {
+  background-size: 200% 200%;
+  animation: gradientShift 10s ease infinite;
+}
+
+
+/* New animation keyframes */
+@keyframes gradient-x {
+  0% {
+    background-position: 0% 50%;
+  }
+  50% {
+    background-position: 100% 50%;
+  }
+  100% {
+    background-position: 0% 50%;
+  }
+}
+
+@keyframes float {
+  0%, 100% {
+    transform: translateY(0px);
+  }
+  50% {
+    transform: translateY(-10px);
+  }
+}
+
+@keyframes shimmer {
+  0% {
+    background-position: -1000px 0;
+  }
+  100% {
+    background-position: 1000px 0;
+  }
+}
+
+/* Utility classes for new animations */
+.animate-gradient-x {
+  animation: gradient-x 3s ease infinite;
+}
+
+.animate-float {
+  animation: float 3s ease-in-out infinite;
+}
+
+.animate-shimmer {
+  background: linear-gradient(90deg, transparent, rgba(255,255,255,0.1), transparent);
+  background-size: 1000px 100%;
+  animation: shimmer 2s infinite;
+}
+
+/* Gradient text effect */
+.text-gradient {
+  background: linear-gradient(90deg, var(--pixaku-teal), var(--pixaku-slate));
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
+}
+
+/* Glass morphism effect */
+.glass-effect {
+  background: rgba(25, 24, 59, 0.7);
+  backdrop-filter: blur(10px);
+  -webkit-backdrop-filter: blur(10px);
+  border: 1px solid rgba(112, 137, 147, 0.2);
+}
+
+/* Hover effects */
+.hover-glow {
+  transition: all 0.3s ease;
+}
+
+.hover-glow:hover {
+  box-shadow: 0 0 30px rgba(161, 194, 189, 0.3);
+}
+
+/* Custom scrollbar for dark theme */
+.dark-scrollbar::-webkit-scrollbar {
+  width: 8px;
+}
+
+.dark-scrollbar::-webkit-scrollbar-track {
+  background: var(--pixaku-darkest);
+}
+
+.dark-scrollbar::-webkit-scrollbar-thumb {
+  background: var(--pixaku-slate);
+  border-radius: 4px;
+}
+
+.dark-scrollbar::-webkit-scrollbar-thumb:hover {
+  background: var(--pixaku-teal);
+}
+
+/* Custom selection color for dark theme */
+.dark-theme ::selection {
+  background-color: var(--pixaku-teal);
+  color: var(--pixaku-darkest);
+}
+
+.dark-theme ::-moz-selection {
+  background-color: var(--pixaku-teal);
+  color: var(--pixaku-darkest);
+}
+
+/* Add these to your existing CSS */
+
+/* Social icon hover tooltip */
+.social-tooltip {
+  position: relative;
+}
+
+.social-tooltip::after {
+  content: attr(aria-label);
+  position: absolute;
+  bottom: 100%;
+  left: 50%;
+  transform: translateX(-50%);
+  background-color: var(--pixaku-dark);
+  color: var(--pixaku-mint);
+  padding: 4px 8px;
+  border-radius: 4px;
+  font-size: 12px;
+  white-space: nowrap;
+  opacity: 0;
+  pointer-events: none;
+  transition: opacity 0.2s ease;
+  margin-bottom: 8px;
+}
+
+.social-tooltip:hover::after {
+  opacity: 1;
+}
+
+/* Gradient border animation */
+.gradient-border {
+  position: relative;
+  border: 2px solid transparent;
+  background: linear-gradient(var(--pixaku-darkest), var(--pixaku-darkest)) padding-box,
+              linear-gradient(45deg, var(--pixaku-slate), var(--pixaku-teal)) border-box;
+}
+
+/* Subtle fade-in animations for footer */
+@keyframes footer-fade {
+  from {
+    opacity: 0;
+    transform: translateY(20px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+.footer-animate {
+  animation: footer-fade 0.6s ease-out forwards;
+}
+
+/* Responsive adjustments */
+@media (max-width: 768px) {
+  .footer-grid {
+    grid-template-columns: 1fr;
+    gap: 2rem;
+  }
+}
+
+/* Smooth link transitions */
+.footer-link {
+  position: relative;
+  padding-left: 0;
+  transition: padding-left 0.3s ease;
+}
+
+.footer-link:hover {
+  padding-left: 8px;
+}
+
+.footer-link::before {
+  content: "→";
+  position: absolute;
+  left: -10px;
+  opacity: 0;
+  transition: opacity 0.3s ease, left 0.3s ease;
+}
+
+.footer-link:hover::before {
+  opacity: 1;
+  left: 0;
+}
+
+/* Add to your existing CSS */
+
+/* Neon glow effect for hover */
+.neon-glow {
+  box-shadow: 0 0 20px rgba(161, 194, 189, 0.1);
+  transition: box-shadow 0.3s ease;
+}
+
+.neon-glow:hover {
+  box-shadow: 0 0 30px rgba(161, 194, 189, 0.3), 0 0 60px rgba(112, 137, 147, 0.1);
+}
+
+/* Subtle pulse animation */
+@keyframes subtle-pulse {
+  0%, 100% {
+    opacity: 1;
+  }
+  50% {
+    opacity: 0.8;
+  }
+}
+
+.animate-subtle-pulse {
+  animation: subtle-pulse 3s ease-in-out infinite;
+}
+
+/* Gradient underline effect */
+.gradient-underline {
+  position: relative;
+}
+
+.gradient-underline::after {
+  content: '';
+  position: absolute;
+  bottom: -2px;
+  left: 0;
+  width: 0;
+  height: 1px;
+  background: linear-gradient(90deg, #A1C2BD, #708993);
+  transition: width 0.3s ease;
+}
+
+.gradient-underline:hover::after {
+  width: 100%;
+}
+
+/* Frosted glass effect */
+.frosted-glass {
+  background: rgba(25, 24, 59, 0.6);
+  backdrop-filter: blur(10px);
+  -webkit-backdrop-filter: blur(10px);
+  border: 1px solid rgba(112, 137, 147, 0.2);
+}
+
+/* Quick float animation */
+@keyframes quick-float {
+  0%, 100% {
+    transform: translateY(0);
+  }
+  50% {
+    transform: translateY(-5px);
+  }
+}
+
+.quick-float {
+  animation: quick-float 2s ease-in-out infinite;
 }
