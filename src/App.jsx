@@ -24,7 +24,7 @@ function App() {
         {/* <Header/> */}
         <Routes path="/*">
           <Route path='/login' element={<LoginPage/>}/>
-          <Route path="/forget" element={<ForgetPasswordPage/>}/>
+          <Route path="/forgotPassword" element={<ForgetPasswordPage/>}/>
           <Route path="/register" element={<RegisterPage/>}/>
           <Route path="/product/:id" element={<ProductPage/>}/>
           <Route path="/payment" element={<PaymentPage/>}/>
