@@ -12,61 +12,310 @@ import MyOrders from "./client/myOrders";
 import MyReviews from "./client/myReviews";
 import MyWishlistPage from "./client/myWishlist";
 import Footer from "../components/footer";
+import { Paintbrush, Sparkles, Palette, Heart, ArrowRight, Star, Brush, Zap, Target, Award, Users, CheckCircle } from "lucide-react";
+import { motion } from "framer-motion";
 
 function LandingPage() {
 	const navigate = useNavigate();
 
 	return (
-		<div className="w-full h-full flex flex-col items-center justify-center px-6 text-white bg-gradient-to-br from-black via-zinc-900 to-black">
-			<div className="max-w-5xl w-full flex flex-col items-center text-center">
-				<h1 className="text-5xl md:text-7xl font-extrabold tracking-tight">
-					Pixaku
-				</h1>
-
-				<p className="mt-6 text-lg text-zinc-300 max-w-xl">
-					Original anime artwork drawn by me.  
-					No AI. No reposts. Just pure hand-drawn anime vibes.
-				</p>
-
-				<div className="mt-10 flex gap-4">
-					<button
-						onClick={() => navigate("/products")}
-						className="px-8 py-3 rounded-xl bg-white text-black font-semibold hover:scale-105 transition"
-					>
-						View Artworks
-					</button>
-
-					<button
-						onClick={() => navigate("/about")}
-						className="px-8 py-3 rounded-xl border border-zinc-600 hover:bg-zinc-800 transition"
-					>
-						About the Artist
-					</button>
-				</div>
+		<div className="w-full min-h-screen bg-gradient-to-br from-[#092635] via-[#1B4242] to-[#003C43] overflow-hidden">
+			{/* Background decorative elements */}
+			<div className="absolute inset-0 overflow-hidden">
+				{/* Floating color blobs */}
+				<div className="absolute top-20 left-10 w-64 h-64 bg-gradient-to-r from-[#5C8374]/10 to-[#9EC8B9]/10 rounded-full blur-3xl animate-pulse"></div>
+				<div className="absolute bottom-20 right-10 w-72 h-72 bg-gradient-to-r from-[#135D66]/10 to-[#77B0AA]/10 rounded-full blur-3xl animate-pulse delay-1000"></div>
+				
+				{/* Anime art style floating elements */}
+				{[...Array(25)].map((_, i) => (
+					<motion.div
+						key={i}
+						className="absolute w-1 h-1 rounded-full"
+						style={{
+							left: `${Math.random() * 100}%`,
+							top: `${Math.random() * 100}%`,
+							background: `linear-gradient(45deg, ${i % 3 === 0 ? '#5C8374' : i % 3 === 1 ? '#9EC8B9' : '#77B0AA'})`,
+							opacity: 0.6 + Math.random() * 0.4
+						}}
+						animate={{
+							y: [0, -15, 0],
+							x: [0, Math.random() * 8 - 4, 0],
+						}}
+						transition={{
+							duration: 4 + Math.random() * 6,
+							repeat: Infinity,
+							delay: Math.random() * 3
+						}}
+					/>
+				))}
 			</div>
 
-			{/* Artist values */}
-			<div className="mt-20 grid grid-cols-1 md:grid-cols-3 gap-6 max-w-5xl w-full">
-				<div className="bg-zinc-900 border border-zinc-800 rounded-2xl p-6">
-					<h3 className="text-xl font-semibold">100% Original</h3>
-					<p className="text-zinc-400 mt-2">
-						Every piece is hand-drawn — no tracing, no AI shortcuts.
-					</p>
+			{/* Main Content */}
+			<div className="relative z-10 w-full min-h-screen flex flex-col items-center justify-center px-4 sm:px-6">
+				<div className="max-w-6xl w-full flex flex-col items-center text-center space-y-8 py-16">
+					{/* Header Badge */}
+					<motion.div
+						initial={{ opacity: 0, y: 20 }}
+						animate={{ opacity: 1, y: 0 }}
+						transition={{ duration: 0.6 }}
+						className="inline-flex items-center gap-2 px-4 py-2 bg-gradient-to-r from-[#5C8374]/20 to-[#77B0AA]/20 backdrop-blur-sm rounded-full border border-[#5C8374]/30 mb-4"
+					>
+						<Sparkles className="w-4 h-4 text-[#E3FEF7]" />
+						<span className="text-sm font-medium text-[#E3FEF7]">
+							✨ Premium Anime Art Collection
+						</span>
+					</motion.div>
+
+					{/* Main Logo */}
+					<motion.div
+						initial={{ opacity: 0, scale: 0.9 }}
+						animate={{ opacity: 1, scale: 1 }}
+						transition={{ duration: 0.8 }}
+						className="relative"
+					>
+						<div className="absolute -inset-6 bg-gradient-to-r from-[#5C8374] via-[#77B0AA] to-[#5C8374] blur-3xl opacity-15 animate-gradient-x rounded-full" />
+						<h1 className="text-6xl md:text-8xl lg:text-9xl font-black tracking-tighter relative">
+							<span className="bg-gradient-to-r from-[#5C8374] via-[#E3FEF7] to-[#77B0AA] bg-clip-text text-transparent">
+								PIXAKU
+							</span>
+						</h1>
+						<p className="mt-4 text-lg text-[#77B0AA] font-light tracking-widest">
+							Where Anime Dreams Become Art
+						</p>
+					</motion.div>
+
+					{/* Tagline */}
+					<motion.div
+						initial={{ opacity: 0, y: 20 }}
+						animate={{ opacity: 1, y: 0 }}
+						transition={{ duration: 0.8, delay: 0.1 }}
+						className="max-w-3xl"
+					>
+						<p className="text-xl md:text-2xl text-[#E3FEF7]/90 font-light leading-relaxed">
+							Original anime artwork drawn with passion.
+							<br />
+							<span className="italic text-[#9EC8B9]">No AI. No reposts. Just pure hand-drawn creativity.</span>
+						</p>
+					</motion.div>
+
+					{/* CTA Buttons */}
+					<motion.div
+						initial={{ opacity: 0, y: 20 }}
+						animate={{ opacity: 1, y: 0 }}
+						transition={{ duration: 0.8, delay: 0.2 }}
+						className="flex flex-col sm:flex-row gap-4 mt-8"
+					>
+						<button
+							onClick={() => navigate("/products")}
+							className="group relative px-12 py-4 rounded-xl bg-gradient-to-r from-[#5C8374] to-[#77B0AA] text-white font-bold text-lg hover:scale-105 transition-all duration-300 hover:shadow-2xl hover:shadow-[#5C8374]/40 flex items-center justify-center gap-3"
+						>
+							<Palette className="w-6 h-6" />
+							Explore Art Gallery
+							<ArrowRight className="w-5 h-5 transform group-hover:translate-x-2 transition-transform" />
+						</button>
+
+						<button
+							onClick={() => navigate("/about")}
+							className="group px-12 py-4 rounded-xl border border-[#77B0AA]/50 bg-gradient-to-r from-[#1B4242]/40 to-[#092635]/40 backdrop-blur-sm text-[#E3FEF7] font-bold text-lg hover:border-[#9EC8B9] hover:shadow-lg hover:shadow-[#9EC8B9]/20 transition-all duration-300 flex items-center justify-center gap-3"
+						>
+							<Users className="w-6 h-6" />
+							Meet the Artist
+						</button>
+					</motion.div>
 				</div>
 
-				<div className="bg-zinc-900 border border-zinc-800 rounded-2xl p-6">
-					<h3 className="text-xl font-semibold">High-Res Files</h3>
-					<p className="text-zinc-400 mt-2">
-						Perfect for wallpapers, prints, and profiles.
-					</p>
+				{/* Featured Stats */}
+				<motion.div
+					initial={{ opacity: 0, y: 20 }}
+					animate={{ opacity: 1, y: 0 }}
+					transition={{ duration: 0.6, delay: 0.3 }}
+					className="mt-12 max-w-4xl w-full"
+				>
+					<div className="bg-gradient-to-r from-[#1B4242]/40 to-[#092635]/40 backdrop-blur-sm border border-[#5C8374]/20 rounded-2xl p-8">
+						<div className="grid grid-cols-2 md:grid-cols-4 gap-6">
+							{[
+								{ value: "500+", label: "Artworks Sold", icon: "🎨" },
+								{ value: "4.9★", label: "Artist Rating", icon: "⭐" },
+								{ value: "100%", label: "Satisfaction", icon: "💯" },
+								{ value: "2K+", label: "Happy Collectors", icon: "❤️" }
+							].map((stat, index) => (
+								<div key={index} className="text-center">
+									<div className="text-3xl mb-2">{stat.icon}</div>
+									<div className="text-2xl md:text-3xl font-bold text-white mb-1">
+										{stat.value}
+									</div>
+									<p className="text-sm text-[#77B0AA]">
+										{stat.label}
+									</p>
+								</div>
+							))}
+						</div>
+					</div>
+				</motion.div>
+
+				{/* Artist Values */}
+				<div className="mt-20 max-w-6xl w-full px-4">
+					<motion.div
+						initial={{ opacity: 0, y: 20 }}
+						whileInView={{ opacity: 1, y: 0 }}
+						transition={{ duration: 0.6 }}
+						viewport={{ once: true }}
+						className="text-center mb-12"
+					>
+						<h2 className="text-3xl md:text-4xl font-bold text-white mb-4">
+							Why Choose{" "}
+							<span className="bg-gradient-to-r from-[#9EC8B9] to-[#E3FEF7] bg-clip-text text-transparent">
+								Pixaku?
+							</span>
+						</h2>
+						<p className="text-xl text-[#E3FEF7]/70 max-w-2xl mx-auto">
+							The premier marketplace for authentic anime artwork
+						</p>
+					</motion.div>
+
+					<div className="grid grid-cols-1 md:grid-cols-3 gap-6">
+						{[
+							{
+								title: "100% Original",
+								description: "Every stroke is hand-drawn — no AI, no tracing, just pure artistic expression.",
+								icon: <CheckCircle className="w-8 h-8" />,
+								color: "from-[#5C8374] to-[#77B0AA]"
+							},
+							{
+								title: "High-Res Files",
+								description: "4K+ resolution perfect for prints, wallpapers, and digital displays.",
+								icon: <Target className="w-8 h-8" />,
+								color: "from-[#77B0AA] to-[#9EC8B9]"
+							},
+							{
+								title: "Direct Support",
+								description: "Your purchase directly supports my art journey and enables more creations.",
+								icon: <Heart className="w-8 h-8" />,
+								color: "from-[#9EC8B9] to-[#E3FEF7]"
+							}
+						].map((value, index) => (
+							<motion.div
+								key={index}
+								initial={{ opacity: 0, y: 30 }}
+								whileInView={{ opacity: 1, y: 0 }}
+								transition={{ duration: 0.6, delay: index * 0.1 }}
+								viewport={{ once: true }}
+								whileHover={{ y: -8, scale: 1.02 }}
+								className="group bg-gradient-to-b from-[#1B4242]/50 to-[#092635]/50 backdrop-blur-sm border border-[#5C8374]/30 rounded-2xl p-8 hover:border-[#77B0AA]/50 transition-all duration-300 cursor-pointer"
+							>
+								<div className={`inline-flex p-4 rounded-xl bg-gradient-to-br ${value.color} mb-6 shadow-lg`}>
+									<div className="text-white">
+										{value.icon}
+									</div>
+								</div>
+								<h3 className="text-xl font-bold text-white mb-3">
+									{value.title}
+								</h3>
+								<p className="text-[#E3FEF7]/80 leading-relaxed">
+									{value.description}
+								</p>
+								<div className="mt-6 pt-6 border-t border-[#5C8374]/20">
+									<div className="w-full h-1 bg-gradient-to-r from-transparent via-gray-600 to-transparent opacity-0 group-hover:opacity-100 transition-opacity"></div>
+								</div>
+							</motion.div>
+						))}
+					</div>
 				</div>
 
-				<div className="bg-zinc-900 border border-zinc-800 rounded-2xl p-6">
-					<h3 className="text-xl font-semibold">Support an Artist</h3>
-					<p className="text-zinc-400 mt-2">
-						Buying here directly supports my art journey.
-					</p>
-				</div>
+				{/* Featured Art Preview */}
+				<motion.div
+					initial={{ opacity: 0, y: 20 }}
+					whileInView={{ opacity: 1, y: 0 }}
+					transition={{ duration: 0.6 }}
+					viewport={{ once: true }}
+					className="mt-24 max-w-7xl w-full px-4"
+				>
+					<div className="flex items-center justify-center gap-3 mb-10">
+						<div className="h-px flex-1 bg-gradient-to-r from-transparent via-[#5C8374] to-transparent"></div>
+						<h2 className="text-3xl md:text-4xl font-bold text-white flex items-center gap-3">
+							<Paintbrush className="w-8 h-8 text-[#9EC8B9]" />
+							<span className="bg-gradient-to-r from-[#77B0AA] to-[#E3FEF7] bg-clip-text text-transparent">
+								Featured Artworks
+							</span>
+						</h2>
+						<div className="h-px flex-1 bg-gradient-to-r from-transparent via-[#5C8374] to-transparent"></div>
+					</div>
+
+					<div className="grid grid-cols-2 md:grid-cols-4 gap-4">
+						{[1, 2, 3, 4].map((item) => (
+							<motion.div
+								key={item}
+								whileHover={{ scale: 1.05 }}
+								className="group relative aspect-square rounded-xl overflow-hidden cursor-pointer"
+								onClick={() => navigate(`/overview/${item}`)}
+							>
+								<div className="absolute -inset-0.5 bg-gradient-to-r from-[#5C8374] via-[#77B0AA] to-[#5C8374] rounded-xl blur opacity-0 group-hover:opacity-30 transition-opacity duration-500"></div>
+								
+								<div className="relative aspect-square bg-gradient-to-br from-[#1B4242] via-[#092635] to-[#1B4242] rounded-xl overflow-hidden border border-[#5C8374]/30 group-hover:border-[#77B0AA]/50 transition-all duration-500">
+									<div className="absolute inset-0 bg-gradient-to-br from-[#5C8374]/10 to-[#77B0AA]/10 group-hover:from-[#5C8374]/20 group-hover:to-[#77B0AA]/20 transition-all duration-500"></div>
+									
+									<div className="absolute bottom-0 left-0 right-0 p-4 bg-gradient-to-t from-black/80 via-black/40 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-300">
+										<div className="flex justify-between items-center">
+											<div>
+												<p className="text-white text-sm font-medium">Artwork #{item}</p>
+												<p className="text-[#9EC8B9] text-xs">Digital Painting</p>
+											</div>
+											<div className="flex items-center gap-1">
+												<Star className="w-3 h-3 text-amber-400 fill-current" />
+												<span className="text-xs text-white">4.{item}</span>
+											</div>
+										</div>
+									</div>
+								</div>
+							</motion.div>
+						))}
+					</div>
+
+					<div className="text-center mt-10">
+						<button
+							onClick={() => navigate("/products")}
+							className="inline-flex items-center gap-2 px-8 py-3 bg-gradient-to-r from-[#1B4242] to-[#092635] text-white font-medium rounded-lg hover:shadow-lg hover:shadow-[#1B4242]/30 transition-all duration-300 border border-[#5C8374]/30 hover:border-[#9EC8B9]/50"
+						>
+							View All Artworks
+							<Zap className="w-4 h-4" />
+						</button>
+					</div>
+				</motion.div>
+
+				{/* Final CTA */}
+				<motion.div
+					initial={{ opacity: 0, y: 20 }}
+					whileInView={{ opacity: 1, y: 0 }}
+					transition={{ duration: 0.6 }}
+					viewport={{ once: true }}
+					className="mt-24 mb-20 max-w-3xl w-full px-4"
+				>
+					<div className="bg-gradient-to-r from-[#5C8374]/20 via-[#77B0AA]/20 to-[#9EC8B9]/20 backdrop-blur-sm border border-[#77B0AA]/30 rounded-2xl p-10 text-center">
+						<Award className="w-16 h-16 text-[#E3FEF7] mx-auto mb-6" />
+						<h2 className="text-3xl md:text-4xl font-bold text-white mb-4">
+							Ready to Discover{" "}
+							<span className="bg-gradient-to-r from-[#5C8374] via-[#77B0AA] to-[#E3FEF7] bg-clip-text text-transparent">
+								Amazing Art?
+							</span>
+						</h2>
+						<p className="text-xl text-[#E3FEF7]/80 mb-8 max-w-2xl mx-auto">
+							Join thousands of anime art collectors who've found their perfect masterpiece
+						</p>
+						<button
+							onClick={() => navigate("/products")}
+							className="group px-14 py-4 bg-gradient-to-r from-[#5C8374] via-[#77B0AA] to-[#5C8374] bg-[length:200%_100%] animate-gradient-x text-white font-bold text-lg rounded-xl hover:shadow-2xl hover:shadow-[#77B0AA]/40 transition-all duration-300"
+						>
+							<span className="flex items-center justify-center gap-3">
+								<Brush className="w-6 h-6" />
+								Start Exploring Now
+								<ArrowRight className="w-6 h-6 transform group-hover:translate-x-3 transition-transform" />
+							</span>
+						</button>
+						<p className="text-[#77B0AA] text-sm mt-6">
+							No sign-up required • 30-day satisfaction guarantee
+						</p>
+					</div>
+				</motion.div>
 			</div>
 		</div>
 	);
@@ -74,9 +323,8 @@ function LandingPage() {
 
 export default function HomePage() {
 	return (
-		<div className="w-full min-h-screen flex flex-col">
+		<div className="w-full min-h-screen flex flex-col bg-gradient-to-b from-[#092635] via-[#1B4242] to-[#003C43]">
 			<Header />
-
 			<div className="w-full flex-1">
 				<Routes>
 					<Route path="/" element={<LandingPage />} />
@@ -97,4 +345,3 @@ export default function HomePage() {
 		</div>
 	);
 }
-

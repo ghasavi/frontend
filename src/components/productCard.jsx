@@ -88,16 +88,19 @@ export default function ProductCard({ product, viewMode = "grid" }) {
             <div className="flex items-center justify-between mt-4">
               <div className="flex items-center gap-4">
                 {/* Price */}
-                <div className="flex items-center gap-2">
-                  <span className="text-2xl font-bold bg-gradient-to-r from-[#5C8374] to-[#77B0AA] bg-clip-text text-transparent group-hover:from-[#1B4242] group-hover:to-[#5C8374] transition-all duration-300">
-                    {formatPrice(product.price)}
-                  </span>
-                  {discountPercentage > 0 && (
-                    <span className="text-sm text-gray-400 line-through group-hover:text-gray-500 transition-colors duration-300">
-                      {formatPrice(product.labelledPrice)}
-                    </span>
-                  )}
-                </div>
+               <div className="flex items-center gap-2">
+  {discountPercentage > 0 && (
+    <span className="text-sm text-gray-400 line-through">
+      {formatPrice(product.labelledPrice)}
+    </span>
+  )}
+  <span className="text-xl font-bold bg-gradient-to-r from-[#5C8374] to-[#77B0AA] bg-clip-text text-transparent ml-2">
+    {formatPrice(product.price)}
+  </span>
+</div>
+
+
+
 
                 {/* Rating */}
                 <div className="flex items-center gap-1">
@@ -186,7 +189,7 @@ export default function ProductCard({ product, viewMode = "grid" }) {
           {/* Category and Rating */}
           <div className="flex items-center justify-between mb-2">
             <div className="px-2 py-1 bg-gradient-to-r from-[#5C8374]/10 to-[#77B0AA]/10 rounded-full text-xs text-[#5C8374] font-medium border border-[#5C8374]/20 group-hover:bg-gradient-to-r group-hover:from-[#5C8374] group-hover:to-[#77B0AA] group-hover:text-white transition-all duration-300">
-              {product.category || "Digital Art"}
+              {product.category || "Hand Drawn"}
             </div>
             <div className="flex items-center gap-1">
               <Star className="w-3 h-3 text-amber-500 fill-current" />
@@ -208,16 +211,19 @@ export default function ProductCard({ product, viewMode = "grid" }) {
 
           {/* Price */}
           <div className="mt-auto pt-3 border-t border-gray-100 group-hover:border-[#1B4242]/20 transition-colors duration-300">
-            <div className="flex items-center gap-2">
-              <span className="text-xl font-bold bg-gradient-to-r from-[#5C8374] to-[#77B0AA] bg-clip-text text-transparent group-hover:from-[#1B4242] group-hover:to-[#5C8374] transition-all duration-300">
-                {formatPrice(product.price)}
-              </span>
-              {discountPercentage > 0 && (
-                <span className="text-sm text-gray-400 line-through group-hover:text-gray-500 transition-colors duration-300">
-                  {formatPrice(product.labelledPrice)}
-                </span>
-              )}
-            </div>
+           <div className="flex items-center gap-2">
+  {discountPercentage > 0 && (
+    <span className="text-sm text-gray-400 line-through">
+      {formatPrice(product.labelledPrice)}
+    </span>
+  )}
+  <span className="text-xl font-bold bg-gradient-to-r from-[#5C8374] to-[#77B0AA] bg-clip-text text-transparent ml-2">
+    {formatPrice(product.price)}
+  </span>
+</div>
+
+
+
             {product.stock > 0 && (
               <p className="text-xs text-gray-500 mt-1 group-hover:text-gray-600 transition-colors duration-300">
                 {product.stock} units available

@@ -8,24 +8,31 @@ export default function EditProfile() {
   const [firstName, setFirstName] = useState("");
   const [lastName, setLastName] = useState("");
   const [imgFile, setImgFile] = useState(null);
+  const [previewImg, setPreviewImg] = useState(null);
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
-    // Simulate fetching user from localStorage
+    // Fetch user from localStorage (simulate API)
     const storedUser = JSON.parse(localStorage.getItem("mockUser"));
     if (!storedUser) {
       toast.error("No user found. Redirecting...");
       setTimeout(() => navigate("/login"), 1000);
       return;
     }
+
     setUser(storedUser);
     setFirstName(storedUser.firstName || "");
     setLastName(storedUser.lastName || "");
+    setPreviewImg(storedUser.img || null);
     setLoading(false);
   }, [navigate]);
 
   const handleFileChange = (e) => {
-    setImgFile(e.target.files[0]);
+    const file = e.target.files[0];
+    if (file) {
+      setImgFile(file);
+      setPreviewImg(URL.createObjectURL(file));
+    }
   };
 
   const handleSave = () => {
@@ -36,12 +43,12 @@ export default function EditProfile() {
 
     const updatedUser = {
       ...user,
-      firstName,
-      lastName,
-      img: imgFile ? URL.createObjectURL(imgFile) : user.img,
+      firstName: firstName.trim(),
+      lastName: lastName.trim(),
+      img: imgFile ? previewImg : user.img,
     };
 
-    // Save to localStorage to simulate backend
+    // Save to localStorage (simulate backend)
     localStorage.setItem("mockUser", JSON.stringify(updatedUser));
     setUser(updatedUser);
     toast.success("Profile updated!");
@@ -82,12 +89,12 @@ export default function EditProfile() {
 
         <label className="flex flex-col gap-2">
           Profile Picture
-          <input type="file" onChange={handleFileChange} />
+          <input type="file" accept="image/*" onChange={handleFileChange} />
         </label>
 
-        {user.img && (
+        {previewImg && (
           <img
-            src={imgFile ? URL.createObjectURL(imgFile) : user.img}
+            src={previewImg}
             alt="Preview"
             className="w-32 h-32 rounded-full object-cover border-2 border-white mt-2"
           />

@@ -17,8 +17,8 @@ export default function AddProductPage() {
   const [displayImage, setDisplayImage] = useState(null);
   const [images, setImages] = useState([]);
 
-  const [labelledPrice, setLabelledPrice] = useState("");
-  const [price, setPrice] = useState("");
+  const [price, setPrice] = useState("");           // Selling price
+  const [labelledPrice, setLabelledPrice] = useState(""); // Original price
   const [stock, setStock] = useState("");
   const [size, setSize] = useState("");
   const [medium, setMedium] = useState("");
@@ -46,10 +46,10 @@ export default function AddProductPage() {
         break;
 
       case "labelledPrice":
-        if (value === "") return "Labelled price is required";
+        if (value === "") return "Original price is required";
         if (Number(value) < 0) return "Cannot be negative";
-        if (Number(value) >= Number(extra.price))
-          return "Labelled price must be LOWER than price";
+        if (extra.price && Number(value) <= Number(extra.price))
+          return "Original price must be HIGHER than selling price";
         break;
 
       case "stock":
@@ -78,10 +78,6 @@ export default function AddProductPage() {
     return "";
   }
 
-  function hasErrors() {
-    return Object.values(errors).some(Boolean);
-  }
-
   function validateAllFields() {
     const newErrors = {
       productId: validateField("productId", productId),
@@ -98,7 +94,6 @@ export default function AddProductPage() {
       displayImage: validateField("displayImage", displayImage),
       images: validateField("images", images),
     };
-
     setErrors(newErrors);
     return !Object.values(newErrors).some(Boolean);
   }
@@ -122,22 +117,19 @@ export default function AddProductPage() {
       const product = {
         productId,
         name,
-        altNames: altNames
-          ? altNames.split(",").map((n) => n.trim())
-          : [],
+        altNames: altNames ? altNames.split(",").map((n) => n.trim()) : [],
         description,
         displayImage: displayImageUrl,
         images: imageUrls,
-        labelledPrice,
-        price,
-        stock,
+        price: Number(price),           // selling price
+        labelledPrice: Number(labelledPrice), // original price
+        stock: Number(stock),
         size,
         medium,
         material,
-        year,
+        year: Number(year),
       };
 
-      // ✅ removed extra /api
       await api.post("/products", product);
 
       toast.success("Product added 🔥");
@@ -151,7 +143,6 @@ export default function AddProductPage() {
   /* ===================== UI ===================== */
   return (
     <div className="w-full max-w-xl mx-auto bg-white p-6 rounded-xl shadow space-y-3">
-
       {[["Product ID", productId, setProductId, "productId"],
         ["Name", name, setName, "name"],
         ["Alt Names (comma separated)", altNames, setAltNames, "altNames"],
@@ -185,34 +176,36 @@ export default function AddProductPage() {
         </div>
       ))}
 
+      {/* Selling Price */}
       <input
         type="number"
         min="1"
         className={`input input-bordered w-full ${errors.price && "border-red-500"}`}
-        placeholder="Price"
+        placeholder="Selling Price"
         value={price}
         onChange={(e) => {
           setPrice(e.target.value);
           setErrors(p => ({
             ...p,
             price: validateField("price", e.target.value),
-            labelledPrice: validateField("labelledPrice", labelledPrice, { price: e.target.value })
+            labelledPrice: validateField("labelledPrice", labelledPrice, { price: Number(e.target.value) })
           }));
         }}
       />
       {errors.price && <p className="text-red-500 text-sm">{errors.price}</p>}
 
+      {/* Original Price */}
       <input
         type="number"
         min="0"
         className={`input input-bordered w-full ${errors.labelledPrice && "border-red-500"}`}
-        placeholder="Labelled Price"
+        placeholder="Original Price (for discount)"
         value={labelledPrice}
         onChange={(e) => {
           setLabelledPrice(e.target.value);
           setErrors(p => ({
             ...p,
-            labelledPrice: validateField("labelledPrice", e.target.value, { price })
+            labelledPrice: validateField("labelledPrice", e.target.value, { price: Number(price) })
           }));
         }}
       />
@@ -231,7 +224,7 @@ export default function AddProductPage() {
       />
       {errors.stock && <p className="text-red-500 text-sm">{errors.stock}</p>}
 
-      {/* YEAR PICKER */}
+      {/* Year */}
       <input
         type="date"
         max={`${currentYear}-12-31`}
