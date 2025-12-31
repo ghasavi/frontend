@@ -262,7 +262,7 @@ export default function AdminUsersPage() {
                   className="px-4 py-2.5 bg-white/90 border border-[#5C8374]/30 rounded-lg text-[#092635] focus:outline-none focus:ring-2 focus:ring-[#77B0AA] transition-all"
                 >
                   <option value="all">All Roles</option>
-                  <option value="user">Users</option>
+                  <option value="customer">Customer</option>
                   <option value="admin">Admins</option>
                 </select>
               </div>

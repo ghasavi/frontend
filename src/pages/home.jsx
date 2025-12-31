@@ -62,7 +62,7 @@ function LandingPage() {
 					>
 						<Sparkles className="w-4 h-4 text-[#E3FEF7]" />
 						<span className="text-sm font-medium text-[#E3FEF7]">
-							✨ Premium Anime Art Collection
+							 Premium Anime Art Collection
 						</span>
 					</motion.div>
 
@@ -124,34 +124,7 @@ function LandingPage() {
 					</motion.div>
 				</div>
 
-				{/* Featured Stats */}
-				<motion.div
-					initial={{ opacity: 0, y: 20 }}
-					animate={{ opacity: 1, y: 0 }}
-					transition={{ duration: 0.6, delay: 0.3 }}
-					className="mt-12 max-w-4xl w-full"
-				>
-					<div className="bg-gradient-to-r from-[#1B4242]/40 to-[#092635]/40 backdrop-blur-sm border border-[#5C8374]/20 rounded-2xl p-8">
-						<div className="grid grid-cols-2 md:grid-cols-4 gap-6">
-							{[
-								{ value: "500+", label: "Artworks Sold", icon: "🎨" },
-								{ value: "4.9★", label: "Artist Rating", icon: "⭐" },
-								{ value: "100%", label: "Satisfaction", icon: "💯" },
-								{ value: "2K+", label: "Happy Collectors", icon: "❤️" }
-							].map((stat, index) => (
-								<div key={index} className="text-center">
-									<div className="text-3xl mb-2">{stat.icon}</div>
-									<div className="text-2xl md:text-3xl font-bold text-white mb-1">
-										{stat.value}
-									</div>
-									<p className="text-sm text-[#77B0AA]">
-										{stat.label}
-									</p>
-								</div>
-							))}
-						</div>
-					</div>
-				</motion.div>
+				
 
 				{/* Artist Values */}
 				<div className="mt-20 max-w-6xl w-full px-4">

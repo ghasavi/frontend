@@ -92,7 +92,7 @@ export default function ProfilePage() {
             <div className="inline-flex items-center gap-2 px-4 py-2 bg-gradient-to-r from-[#5C8374]/20 to-[#77B0AA]/20 backdrop-blur-sm rounded-full border border-[#5C8374]/30 mb-6">
               <Sparkles className="w-4 h-4 text-[#E3FEF7]" />
               <span className="text-sm font-medium text-[#E3FEF7]">
-                🎨 Your Personal Art Space
+                 Your Personal Art Space
               </span>
             </div>
             <h1 className="text-4xl md:text-5xl font-bold text-white mb-4">
@@ -199,7 +199,6 @@ export default function ProfilePage() {
               <div className="bg-gradient-to-b from-[#1B4242]/80 to-[#092635]/80 backdrop-blur-sm border border-[#5C8374]/30 rounded-2xl p-6">
                 <div className="flex overflow-x-auto gap-2 pb-2 scrollbar-hide">
                   {[
-                    { id: "overview", label: "Overview", icon: <User className="w-4 h-4" /> },
                     { id: "orders", label: "My Orders", icon: <Package className="w-4 h-4" /> },
                     { id: "wishlist", label: "Wishlist", icon: <Heart className="w-4 h-4" /> },
                     { id: "reviews", label: "Reviews", icon: <Star className="w-4 h-4" /> },
@@ -221,70 +220,7 @@ export default function ProfilePage() {
                 </div>
               </div>
 
-              {/* Tab Content */}
-              <div className="bg-gradient-to-b from-[#1B4242]/80 to-[#092635]/80 backdrop-blur-sm border border-[#5C8374]/30 rounded-2xl p-8">
-                {activeTab === "overview" && (
-                  <motion.div
-                    initial={{ opacity: 0 }}
-                    animate={{ opacity: 1 }}
-                    transition={{ duration: 0.3 }}
-                  >
-                    <h3 className="text-2xl font-bold text-white mb-6">Profile Overview</h3>
-                    {user.bio ? (
-                      <div className="space-y-4">
-                        <p className="text-[#E3FEF7]/80 leading-relaxed">{user.bio}</p>
-                      </div>
-                    ) : (
-                      <div className="text-center py-12">
-                        <div className="w-20 h-20 mx-auto mb-6 bg-gradient-to-r from-[#5C8374]/20 to-[#77B0AA]/20 rounded-full flex items-center justify-center">
-                          <Edit3 className="w-8 h-8 text-[#77B0AA]" />
-                        </div>
-                        <h4 className="text-xl font-semibold text-white mb-3">Complete Your Profile</h4>
-                        <p className="text-[#77B0AA] mb-6">Add a bio and personalize your art collector profile</p>
-                        <button
-                          onClick={() => navigate("/editProfile")}
-                          className="px-6 py-3 bg-gradient-to-r from-[#5C8374] to-[#77B0AA] text-white font-medium rounded-lg hover:opacity-90 transition-opacity duration-200"
-                        >
-                          Edit Profile
-                        </button>
-                      </div>
-                    )}
-                  </motion.div>
-                )}
-
-                {activeTab === "orders" && (
-                  <div className="text-center py-12">
-                    <div className="w-20 h-20 mx-auto mb-6 bg-gradient-to-r from-[#5C8374]/20 to-[#77B0AA]/20 rounded-full flex items-center justify-center">
-                      <Package className="w-8 h-8 text-[#77B0AA]" />
-                    </div>
-                    <h4 className="text-xl font-semibold text-white mb-3">Your Orders</h4>
-                    <p className="text-[#77B0AA] mb-6">View and manage your art purchases</p>
-                    <button
-                      onClick={() => navigate("/myorders")}
-                      className="px-6 py-3 bg-gradient-to-r from-[#5C8374] to-[#77B0AA] text-white font-medium rounded-lg hover:opacity-90 transition-opacity duration-200"
-                    >
-                      View All Orders
-                    </button>
-                  </div>
-                )}
-
-                {activeTab === "wishlist" && (
-                  <div className="text-center py-12">
-                    <div className="w-20 h-20 mx-auto mb-6 bg-gradient-to-r from-[#5C8374]/20 to-[#77B0AA]/20 rounded-full flex items-center justify-center">
-                      <Heart className="w-8 h-8 text-[#77B0AA]" />
-                    </div>
-                    <h4 className="text-xl font-semibold text-white mb-3">Your Wishlist</h4>
-                    <p className="text-[#77B0AA] mb-6">Save your favorite artworks for later</p>
-                    <button
-                      onClick={() => navigate("/wishlist")}
-                      className="px-6 py-3 bg-gradient-to-r from-[#5C8374] to-[#77B0AA] text-white font-medium rounded-lg hover:opacity-90 transition-opacity duration-200"
-                    >
-                      View Wishlist
-                    </button>
-                  </div>
-                )}
-              </div>
-
+             
               {/* Action Buttons */}
               <div className="flex flex-col sm:flex-row gap-4">
                 <button
@@ -308,34 +244,7 @@ export default function ProfilePage() {
             </motion.div>
           </div>
 
-          {/* Recent Activity Section */}
-          <motion.div
-            initial={{ opacity: 0, y: 20 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{ duration: 0.6, delay: 0.3 }}
-            className="mt-12"
-          >
-            <div className="bg-gradient-to-r from-[#5C8374]/20 via-[#77B0AA]/20 to-[#9EC8B9]/20 backdrop-blur-sm border border-[#5C8374]/30 rounded-2xl p-8">
-              <h3 className="text-2xl font-bold text-white mb-6">Recent Activity</h3>
-              <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
-                {[
-                  { activity: "Viewed 'Midnight Sakura'", time: "2 hours ago", icon: "👁️" },
-                  { activity: "Added to Wishlist", time: "1 day ago", icon: "💖" },
-                  { activity: "Reviewed 'Neon Dreams'", time: "3 days ago", icon: "⭐" }
-                ].map((item, index) => (
-                  <div key={index} className="p-4 bg-gradient-to-b from-[#1B4242]/30 to-[#092635]/30 border border-[#5C8374]/20 rounded-xl">
-                    <div className="flex items-start gap-3">
-                      <div className="text-2xl">{item.icon}</div>
-                      <div>
-                        <p className="text-white font-medium">{item.activity}</p>
-                        <p className="text-sm text-[#77B0AA] mt-1">{item.time}</p>
-                      </div>
-                    </div>
-                  </div>
-                ))}
-              </div>
-            </div>
-          </motion.div>
+          
         </div>
       </div>
     </div>

@@ -102,13 +102,7 @@ export default function ProductCard({ product, viewMode = "grid" }) {
 
 
 
-                {/* Rating */}
-                <div className="flex items-center gap-1">
-                  <Star className="w-4 h-4 text-amber-500 fill-current" />
-                  <span className="text-sm text-gray-700 font-medium group-hover:text-gray-800 transition-colors duration-300">
-                    {product.rating || "4.5"}
-                  </span>
-                </div>
+                
               </div>
             </div>
           </div>
@@ -191,12 +185,7 @@ export default function ProductCard({ product, viewMode = "grid" }) {
             <div className="px-2 py-1 bg-gradient-to-r from-[#5C8374]/10 to-[#77B0AA]/10 rounded-full text-xs text-[#5C8374] font-medium border border-[#5C8374]/20 group-hover:bg-gradient-to-r group-hover:from-[#5C8374] group-hover:to-[#77B0AA] group-hover:text-white transition-all duration-300">
               {product.category || "Hand Drawn"}
             </div>
-            <div className="flex items-center gap-1">
-              <Star className="w-3 h-3 text-amber-500 fill-current" />
-              <span className="text-xs text-gray-700 font-medium group-hover:text-gray-800 transition-colors duration-300">
-                {product.rating || "4.5"}
-              </span>
-            </div>
+            
           </div>
 
           {/* Product Name */}

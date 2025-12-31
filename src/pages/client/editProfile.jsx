@@ -107,7 +107,7 @@ export default function EditProfile() {
             <div className="inline-flex items-center gap-2 px-4 py-2 bg-gradient-to-r from-[#5C8374]/20 to-[#77B0AA]/20 backdrop-blur-sm rounded-full border border-[#5C8374]/30 mb-4">
               <Sparkles className="w-4 h-4 text-[#E3FEF7]" />
               <span className="text-sm font-medium text-[#E3FEF7]">
-                ✨ Customize Your Profile
+                 Customize Your Profile
               </span>
             </div>
 
@@ -249,23 +249,7 @@ export default function EditProfile() {
                     </p>
                   </div>
 
-                  {/* Bio */}
-                  <div>
-                    <label className="flex items-center gap-2 text-sm font-medium text-[#E3FEF7]/90 mb-2">
-                      <Palette className="w-4 h-4 text-[#77B0AA]" />
-                      Bio
-                    </label>
-                    <textarea
-                      value={bio}
-                      onChange={(e) => setBio(e.target.value)}
-                      placeholder="Tell us about your art interests, favorite artists, or collections..."
-                      rows="4"
-                      className="w-full px-4 py-3 bg-gradient-to-r from-[#1B4242]/50 to-[#092635]/50 backdrop-blur-sm border border-[#5C8374]/30 rounded-lg text-[#E3FEF7] placeholder:text-[#5C8374]/50 focus:outline-none focus:ring-2 focus:ring-[#77B0AA] focus:border-transparent transition-all resize-none"
-                    />
-                    <p className="text-xs text-[#77B0AA] mt-2">
-                      Optional: Share your art journey with the community
-                    </p>
-                  </div>
+                 
                 </div>
               </div>
 

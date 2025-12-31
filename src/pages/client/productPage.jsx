@@ -11,7 +11,6 @@ export default function ProductPage() {
   const [isLoading, setIsLoading] = useState(true);
   const [query, setQuery] = useState("");
   const [viewMode, setViewMode] = useState("grid"); // grid or list
-  const [selectedCategory, setSelectedCategory] = useState("all");
   const [sortBy, setSortBy] = useState("newest");
 
   // Helper to normalize API response
@@ -70,16 +69,7 @@ export default function ProductPage() {
     }
   };
 
-  // Categories for filtering
-  const categories = [
-    { id: "all", label: "All Artworks", icon: "🎨" },
-    { id: "digital", label: "Digital Art", icon: "💻" },
-    { id: "traditional", label: "Traditional", icon: "🖌️" },
-    { id: "character", label: "Characters", icon: "👤" },
-    { id: "landscape", label: "Landscapes", icon: "🏞️" },
-    { id: "fanart", label: "Fan Art", icon: "🌟" }
-  ];
-
+  
   // Sort options
   const sortOptions = [
     { id: "newest", label: "Newest First" },
@@ -88,6 +78,29 @@ export default function ProductPage() {
     { id: "price-high", label: "Price: High to Low" },
     { id: "popular", label: "Most Popular" }
   ];
+
+  const sortedProducts = [...products].sort((a, b) => {
+  switch (sortBy) {
+    case "newest":
+      return new Date(b.createdAt) - new Date(a.createdAt);
+
+    case "oldest":
+      return new Date(a.createdAt) - new Date(b.createdAt);
+
+    case "price-low":
+      return a.price - b.price;
+
+    case "price-high":
+      return b.price - a.price;
+
+    case "popular":
+      return (b.salesCount || 0) - (a.salesCount || 0);
+
+    default:
+      return 0;
+  }
+});
+
 
   return (
     <div className="w-full min-h-screen bg-gradient-to-br from-[#092635] via-[#1B4242] to-[#003C43]">
@@ -110,7 +123,7 @@ export default function ProductPage() {
               <div className="inline-flex items-center gap-2 px-4 py-2 bg-gradient-to-r from-[#5C8374]/20 to-[#77B0AA]/20 backdrop-blur-sm rounded-full border border-[#5C8374]/30 mb-4">
                 <Sparkles className="w-4 h-4 text-[#E3FEF7]" />
                 <span className="text-sm font-medium text-[#E3FEF7]">
-                  🎨 Explore Our Collection
+                   Explore Our Collection
                 </span>
               </div>
               
@@ -152,23 +165,8 @@ export default function ProductPage() {
 
             {/* Filters and Controls */}
             <div className="flex flex-col lg:flex-row justify-between items-center gap-4 mb-8">
-              {/* Categories */}
-              <div className="flex items-center gap-2 overflow-x-auto pb-2 scrollbar-hide">
-                {categories.map((category) => (
-                  <button
-                    key={category.id}
-                    onClick={() => setSelectedCategory(category.id)}
-                    className={`flex items-center gap-2 px-4 py-2 rounded-lg whitespace-nowrap transition-all duration-200 ${
-                      selectedCategory === category.id
-                        ? "bg-gradient-to-r from-[#5C8374] to-[#77B0AA] text-[#092635]"
-                        : "bg-gradient-to-r from-[#1B4242]/50 to-[#092635]/50 text-[#77B0AA] hover:text-[#E3FEF7]"
-                    }`}
-                  >
-                    <span>{category.icon}</span>
-                    <span className="text-sm font-medium">{category.label}</span>
-                  </button>
-                ))}
-              </div>
+              
+             
 
               {/* View Controls */}
               <div className="flex items-center gap-4">
@@ -280,7 +278,7 @@ export default function ProductPage() {
                 ? "grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6"
                 : "space-y-4"
               }>
-                {products.map((product, index) => (
+{sortedProducts.map((product, index) => (
                   <motion.div
                     key={product.productId}
                     initial={{ opacity: 0, y: 20 }}

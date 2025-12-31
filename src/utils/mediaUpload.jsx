@@ -6,16 +6,15 @@ const supabaseAnonKey = import.meta.env.VITE_SUPABASE_ANON_KEY;
 const supabase = createClient(supabaseUrl, supabaseAnonKey);
 
 export default async function mediaUpload(file) {
-  if (!file) {
-    throw new Error("No file selected");
-  }
+  if (!file) throw new Error("No file selected");
 
   const fileExt = file.name.split(".").pop();
-  const fileName = `${Date.now()}.${fileExt}`;
+  const fileName = `${crypto.randomUUID()}.${fileExt}`;
+  const filePath = `products/${fileName}`;
 
   const { error } = await supabase.storage
     .from("images")
-    .upload(fileName, file, {
+    .upload(filePath, file, {
       cacheControl: "3600",
       upsert: false,
     });
@@ -27,7 +26,7 @@ export default async function mediaUpload(file) {
 
   const { data } = supabase.storage
     .from("images")
-    .getPublicUrl(fileName);
+    .getPublicUrl(filePath);
 
   return data.publicUrl;
 }

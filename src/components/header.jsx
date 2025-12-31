@@ -9,9 +9,9 @@ export default function Header() {
   const [profileOpen, setProfileOpen] = useState(false);
   const [scrolled, setScrolled] = useState(false);
   const profileRef = useRef(null);
-
+  
   const navigate = useNavigate();
-  const { user, logout } = useContext(UserContext);
+  const { user, logout , cart} = useContext(UserContext);
 
   // Handle scroll effect
   useEffect(() => {
@@ -136,8 +136,9 @@ export default function Header() {
               <Link to="/cart" className="p-2 block relative">
                 <ShoppingCart className="w-6 h-6 text-[#5C8374] hover:text-[#1B4242] transition-colors" />
                 <span className="absolute -top-1 -right-1 w-5 h-5 bg-gradient-to-r from-[#5C8374] to-[#77B0AA] text-white text-xs rounded-full flex items-center justify-center font-medium shadow-sm">
-                  0
-                </span>
+  {cart?.length || 0}
+</span>
+
               </Link>
             </motion.div>
 
@@ -314,8 +315,9 @@ export default function Header() {
                         <span className="font-medium">Cart</span>
                       </div>
                       <span className="w-6 h-6 rounded-full bg-gradient-to-r from-[#5C8374] to-[#77B0AA] text-white text-xs flex items-center justify-center font-medium">
-                        0
-                      </span>
+  {cart?.length || 0}
+</span>
+
                     </Link>
                   </motion.div>
                 </div>

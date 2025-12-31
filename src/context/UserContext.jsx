@@ -5,6 +5,7 @@ export const UserContext = createContext();
 
 export function UserProvider({ children }) {
   const [user, setUser] = useState(null);
+  const [cart, setCart] = useState([]); // <-- add this
   const [token, setToken] = useState(localStorage.getItem("token") || "");
   const [loading, setLoading] = useState(true);
 
@@ -18,11 +19,15 @@ export function UserProvider({ children }) {
       try {
         const res = await api.get("/users/me"); // fetch current user
         setUser(res.data);
+
+        // if your API returns cart with user
+        setCart(res.data.cart || []);
       } catch (err) {
         console.error("USER FETCH ERROR:", err);
         localStorage.removeItem("token");
         setToken("");
         setUser(null);
+        setCart([]);
       } finally {
         setLoading(false);
       }
@@ -35,17 +40,19 @@ export function UserProvider({ children }) {
     localStorage.setItem("token", tokenValue);
     setToken(tokenValue);
     setUser(userData);
+    setCart(userData.cart || []); // <-- add cart on login
   };
 
   const logout = () => {
     localStorage.removeItem("token");
     setToken("");
     setUser(null);
+    setCart([]); // <-- reset cart on logout
     window.location.href = "/login";
   };
 
   return (
-    <UserContext.Provider value={{ user, setUser, token, login, logout, loading }}>
+    <UserContext.Provider value={{ user, setUser, cart, setCart, token, login, logout, loading }}>
       {children}
     </UserContext.Provider>
   );

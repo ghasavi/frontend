@@ -256,22 +256,7 @@ export default function MyWishlistPage() {
                       {item.name}
                     </h3>
                     
-                    {/* Rating */}
-                    <div className="flex items-center gap-1 mb-3">
-                      {[1, 2, 3, 4, 5].map((star) => (
-                        <Star
-                          key={star}
-                          className={`w-4 h-4 ${
-                            star <= (item.rating || 4)
-                              ? "text-yellow-400 fill-yellow-400"
-                              : "text-[#5C8374]/20"
-                          }`}
-                        />
-                      ))}
-                      <span className="text-sm text-[#5C8374] ml-2">
-                        ({item.reviews || 12})
-                      </span>
-                    </div>
+                   
 
                     {/* Price */}
                     <div className="flex items-center justify-between mb-4">
@@ -340,7 +325,7 @@ export default function MyWishlistPage() {
                       <Palette className="w-3 h-3 text-[#5C8374]" />
                       <span className="text-[#5C8374]">By </span>
                       <span className="font-medium text-[#092635]">
-                        {item.artist || "Anime Artist"}
+                        {item.artist || "Avin"}
                       </span>
                     </div>
                   </div>

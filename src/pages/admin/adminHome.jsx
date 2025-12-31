@@ -114,8 +114,8 @@ function AdminHome() {
         <Routes>
           <Route path="/dashboard" element={<div>Welcome to Admin Dashboard</div>} />
           <Route path="/products" element={<ProductsPage />} />
-          <Route path="/add-products" element={<AddProductsPage />} />
-          <Route path="/edit-products/:id" element={<EditProductPage />} />
+          <Route path="/add-product" element={<AddProductsPage />} />
+          <Route path="/edit-product/:id" element={<EditProductPage />} />
           <Route path="/users" element={<AdminUsersPage />} />
           <Route path="/reviews" element={<AdminReviews />} />
           <Route path="/orders" element={<OrdersPage />} />

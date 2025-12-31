@@ -395,22 +395,7 @@ export default function ProductOverviewPage() {
 
               {/* Product info */}
               <div className="p-6 space-y-6">
-                {/* Rating */}
-                <div className="flex items-center gap-4">
-                  <div className="flex items-center gap-1">
-                    {[1, 2, 3, 4, 5].map((star) => (
-                      <Star
-                        key={star}
-                        className={`w-5 h-5 ${
-                          star <= 4
-                            ? "text-yellow-400 fill-yellow-400"
-                            : "text-[#5C8374]/20"
-                        }`}
-                      />
-                    ))}
-                  </div>
-                  <span className="text-[#5C8374]">(24 reviews)</span>
-                </div>
+               
 
                 {/* Description */}
                 <div>
