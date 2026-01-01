@@ -44,6 +44,8 @@ export default function ProductOverviewPage() {
   const [addingToCart, setAddingToCart] = useState(false);
   const [addingToWishlist, setAddingToWishlist] = useState(false);
 
+  const images = Array.isArray(product?.images) ? product.images : [];
+
   /* ================= FETCH PRODUCT ================= */
   useEffect(() => {
     if (!productId) {
@@ -65,6 +67,22 @@ export default function ProductOverviewPage() {
 
     fetchProduct();
   }, [productId]);
+
+ useEffect(() => {
+  if (!product) return;
+
+  if (
+    product.displayImage &&
+    Array.isArray(product.images) &&
+    !product.images.includes(product.displayImage)
+  ) {
+    setProduct((prev) => ({
+      ...prev,
+      images: [product.displayImage, ...prev.images],
+    }));
+  }
+}, [product]);
+
 
   /* ================= FETCH RELATED ================= */
   useEffect(() => {
@@ -126,7 +144,6 @@ export default function ProductOverviewPage() {
   /* ================= SAFE VALUES ================= */
   const price = Number(product?.price) || 0;
   const labelledPrice = Number(product?.labelledPrice) || 0;
-  const images = Array.isArray(product?.images) ? product.images : [];
   const altNames = Array.isArray(product?.altNames) ? product.altNames : [];
   const stock = Number(product?.stock) || 0;
   const isOutOfStock = stock <= 0;
@@ -135,12 +152,15 @@ export default function ProductOverviewPage() {
 
   /* ================= IMAGE SLIDER ================= */
   const nextImage = () => {
-    setCurrentImageIndex((prev) => (prev + 1) % images.length);
-  };
+  if (!images.length) return;
+  setCurrentImageIndex((prev) => (prev + 1) % images.length);
+};
 
-  const prevImage = () => {
-    setCurrentImageIndex((prev) => (prev - 1 + images.length) % images.length);
-  };
+const prevImage = () => {
+  if (!images.length) return;
+  setCurrentImageIndex((prev) => (prev - 1 + images.length) % images.length);
+};
+
 
   /* ================= ADD TO CART ================= */
   const handleAddToCart = async () => {
@@ -178,7 +198,7 @@ export default function ProductOverviewPage() {
           {
             productId: product.productId,
             name: product.name,
-            image: images[0] || "",
+            image: product.displayImage || images[0] || "",
             price,
             labelledPrice,
             qty: quantity,
@@ -240,7 +260,7 @@ export default function ProductOverviewPage() {
           {
             productId: product.productId,
             name: product.name,
-            image: images[0] || "",
+image: product.displayImage || images[0] || "",
             price,
             labelledPrice,
             qty: quantity,
@@ -636,8 +656,9 @@ export default function ProductOverviewPage() {
                     {/* Product image */}
                     <div className="relative aspect-square bg-gradient-to-br from-[#5C8374]/10 to-[#77B0AA]/10 overflow-hidden">
                       <img
-                        src={item.images?.[0]}
-                        alt={item.name}
+  src={item.displayImage || item.images?.[0] || "/placeholder.png"}
+  alt={item.name}
+
                         className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500"
                       />
                       <div className="absolute inset-0 bg-gradient-to-t from-[#092635]/30 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-300" />

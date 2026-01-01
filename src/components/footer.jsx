@@ -38,7 +38,7 @@ export default function Footer() {
 						</div>
 						<p className="text-sm text-[#77B0AA]/70 max-w-md leading-relaxed">
 							Authentic anime art, hand-drawn with passion. 
-							No AI. No reposts. Just pure artistic expression.
+							No AI. Just pure artistic expression.
 						</p>
 						
 						{/* Social Links */}
@@ -133,16 +133,7 @@ export default function Footer() {
 						<p className="text-sm text-[#77B0AA]/70">
 							Get notified about new artworks and exclusive offers.
 						</p>
-						<div className="relative">
-							<input
-								type="email"
-								placeholder="Your email"
-								className="w-full px-4 py-3 bg-gradient-to-r from-[#1B4242]/30 to-[#092635]/30 backdrop-blur-sm border border-[#5C8374]/30 rounded-lg text-white placeholder:text-[#5C8374]/50 focus:outline-none focus:ring-2 focus:ring-[#77B0AA] focus:border-transparent transition-all"
-							/>
-							<button className="absolute right-2 top-1/2 transform -translate-y-1/2 px-3 py-1.5 bg-gradient-to-r from-[#5C8374] to-[#77B0AA] text-white text-sm rounded hover:opacity-90 transition-opacity duration-200">
-								Join
-							</button>
-						</div>
+						
 					</motion.div>
 				</div>
 
@@ -184,13 +175,13 @@ export default function Footer() {
 
 					{/* Legal Links */}
 					<div className="flex items-center gap-6">
-						<Link to="/privacy" className="text-xs text-[#5C8374] hover:text-[#77B0AA] transition-colors">
+						<Link to="/" className="text-xs text-[#5C8374] hover:text-[#77B0AA] transition-colors">
 							Privacy
 						</Link>
-						<Link to="/terms" className="text-xs text-[#5C8374] hover:text-[#77B0AA] transition-colors">
+						<Link to="/" className="text-xs text-[#5C8374] hover:text-[#77B0AA] transition-colors">
 							Terms
 						</Link>
-						<Link to="/support" className="text-xs text-[#5C8374] hover:text-[#77B0AA] transition-colors">
+						<Link to="/" className="text-xs text-[#5C8374] hover:text-[#77B0AA] transition-colors">
 							Support
 						</Link>
 					</div>

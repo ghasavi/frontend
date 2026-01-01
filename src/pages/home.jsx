@@ -18,6 +18,25 @@ import { motion } from "framer-motion";
 function LandingPage() {
 	const navigate = useNavigate();
 
+	const featuredArtworks = [
+  {
+    image: "/featured/20241225_180306.jpg",
+    title: "Satoru Gojo"
+  },
+  {
+    image: "/featured/20250226_173613.jpg",
+    title: "Aki Hayakawa"
+  },
+  {
+    image: "/featured/20241230_172738.jpg",
+    title: "Ken Takakura"
+  },
+  {
+    image: "/featured/20241224_171845.jpg",
+    title: "Levi Ackerman"
+  }
+];
+
 	return (
 		<div className="w-full min-h-screen bg-gradient-to-br from-[#092635] via-[#1B4242] to-[#003C43] overflow-hidden">
 			{/* Background decorative elements */}
@@ -94,7 +113,7 @@ function LandingPage() {
 						<p className="text-xl md:text-2xl text-[#E3FEF7]/90 font-light leading-relaxed">
 							Original anime artwork drawn with passion.
 							<br />
-							<span className="italic text-[#9EC8B9]">No AI. No reposts. Just pure hand-drawn creativity.</span>
+							<span className="italic text-[#9EC8B9]">No AI. Just pure hand-drawn creativity.</span>
 						</p>
 					</motion.div>
 
@@ -215,34 +234,29 @@ function LandingPage() {
 					</div>
 
 					<div className="grid grid-cols-2 md:grid-cols-4 gap-4">
-						{[1, 2, 3, 4].map((item) => (
-							<motion.div
-								key={item}
-								whileHover={{ scale: 1.05 }}
-								className="group relative aspect-square rounded-xl overflow-hidden cursor-pointer"
-								onClick={() => navigate(`/overview/${item}`)}
-							>
-								<div className="absolute -inset-0.5 bg-gradient-to-r from-[#5C8374] via-[#77B0AA] to-[#5C8374] rounded-xl blur opacity-0 group-hover:opacity-30 transition-opacity duration-500"></div>
-								
-								<div className="relative aspect-square bg-gradient-to-br from-[#1B4242] via-[#092635] to-[#1B4242] rounded-xl overflow-hidden border border-[#5C8374]/30 group-hover:border-[#77B0AA]/50 transition-all duration-500">
-									<div className="absolute inset-0 bg-gradient-to-br from-[#5C8374]/10 to-[#77B0AA]/10 group-hover:from-[#5C8374]/20 group-hover:to-[#77B0AA]/20 transition-all duration-500"></div>
-									
-									<div className="absolute bottom-0 left-0 right-0 p-4 bg-gradient-to-t from-black/80 via-black/40 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-300">
-										<div className="flex justify-between items-center">
-											<div>
-												<p className="text-white text-sm font-medium">Artwork #{item}</p>
-												<p className="text-[#9EC8B9] text-xs">Digital Painting</p>
-											</div>
-											<div className="flex items-center gap-1">
-												<Star className="w-3 h-3 text-amber-400 fill-current" />
-												<span className="text-xs text-white">4.{item}</span>
-											</div>
-										</div>
-									</div>
-								</div>
-							</motion.div>
-						))}
-					</div>
+  {featuredArtworks.map((art, index) => (
+    <motion.div
+      key={index}
+      whileHover={{ scale: 1.05 }}
+      className="group relative aspect-square rounded-xl overflow-hidden"
+    >
+      <div className="absolute -inset-0.5 bg-gradient-to-r from-[#5C8374] via-[#77B0AA] to-[#5C8374] rounded-xl blur opacity-0 group-hover:opacity-30 transition-opacity duration-500"></div>
+      
+      <div className="relative w-full h-full rounded-xl overflow-hidden border border-[#5C8374]/30 group-hover:border-[#77B0AA]/50 transition-all duration-500">
+        <img
+          src={art.image}
+          alt={art.title}
+          className="w-full h-full object-cover"
+        />
+        <div className="absolute inset-0 bg-gradient-to-t from-black/60 via-black/10 to-transparent"></div>
+        <div className="absolute bottom-3 left-3">
+          <p className="text-white text-sm font-semibold">{art.title}</p>
+        </div>
+      </div>
+    </motion.div>
+  ))}
+</div>
+
 
 					<div className="text-center mt-10">
 						<button
@@ -285,7 +299,7 @@ function LandingPage() {
 							</span>
 						</button>
 						<p className="text-[#77B0AA] text-sm mt-6">
-							No sign-up required • 30-day satisfaction guarantee
+							Sign-up required • 30-day satisfaction guarantee
 						</p>
 					</div>
 				</motion.div>

@@ -17,6 +17,7 @@ import {
   Palette
 } from "lucide-react";
 import toast from "react-hot-toast";
+import api from "../../utils/axios";
 
 export default function MyWishlistPage() {
   const { user } = useContext(UserContext);
@@ -27,6 +28,7 @@ export default function MyWishlistPage() {
 
   const wishlistKey = user?.email ? `wishlist_${user.email}` : null;
 
+  
   useEffect(() => {
     if (!wishlistKey) {
       setLoading(false);
@@ -304,19 +306,7 @@ export default function MyWishlistPage() {
                       </motion.button>
                     </div>
 
-                    {/* Quick add to cart */}
-                    <motion.button
-                      whileHover={{ scale: 1.02 }}
-                      whileTap={{ scale: 0.98 }}
-                      className="w-full mt-3 py-2 bg-transparent border border-[#5C8374] text-[#5C8374] font-medium rounded-lg hover:bg-[#5C8374]/10 transition-all duration-300 flex items-center justify-center gap-2"
-                      onClick={() => {
-                        // Add to cart functionality
-                        toast.success("Added to cart! 🛒");
-                      }}
-                    >
-                      <ShoppingBag className="w-4 h-4" />
-                      Add to Cart
-                    </motion.button>
+                    
                   </div>
 
                   {/* Artist info */}
@@ -358,23 +348,12 @@ export default function MyWishlistPage() {
                   <motion.button
                     whileHover={{ scale: 1.05 }}
                     whileTap={{ scale: 0.95 }}
-                    onClick={() => navigate("/")}
+                    onClick={() => navigate("/products")}
                     className="px-6 py-3 bg-transparent border border-[#77B0AA] text-[#77B0AA] font-medium rounded-lg hover:bg-[#77B0AA]/10 transition-all duration-300"
                   >
                     Continue Shopping
                   </motion.button>
-                  <motion.button
-                    whileHover={{ scale: 1.05 }}
-                    whileTap={{ scale: 0.95 }}
-                    className="px-6 py-3 bg-gradient-to-r from-[#5C8374] to-[#77B0AA] text-[#E3FEF7] font-bold rounded-lg hover:shadow-lg hover:shadow-[#5C8374]/30 transition-all duration-300 flex items-center gap-2"
-                    onClick={() => {
-                      // Add all to cart functionality
-                      toast.success("All items added to cart! 🛒");
-                    }}
-                  >
-                    <ShoppingBag className="w-5 h-5" />
-                    Add All to Cart
-                  </motion.button>
+                  
                 </div>
               </div>
             </div>

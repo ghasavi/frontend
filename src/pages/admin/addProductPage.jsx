@@ -59,6 +59,7 @@ export default function AddProductPage() {
       const reader = new FileReader();
       reader.onloadend = () => {
         setDisplayImagePreview(reader.result);
+        console.log("Preview set:", reader.result);
       };
       reader.readAsDataURL(file);
     }

@@ -556,7 +556,7 @@ export default function MyReviews() {
                   <motion.button
                     whileHover={{ scale: 1.05 }}
                     whileTap={{ scale: 0.95 }}
-                    onClick={() => window.location.href = "/orders"}
+                    onClick={() => window.location.href = "/myorders"}
                     className="px-6 py-3 bg-transparent border border-[#77B0AA] text-[#77B0AA] font-medium rounded-lg hover:bg-[#77B0AA]/10 transition-all duration-300"
                   >
                     Write More Reviews

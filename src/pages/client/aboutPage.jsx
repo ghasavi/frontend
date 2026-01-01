@@ -46,7 +46,7 @@ export default function AboutPage() {
 						<div className="inline-flex items-center gap-2 px-4 py-2 bg-gradient-to-r from-[#5C8374]/20 to-[#77B0AA]/20 backdrop-blur-sm rounded-full border border-[#5C8374]/30 mb-6">
 							<Sparkles className="w-4 h-4 text-[#E3FEF7]" />
 							<span className="text-sm font-medium text-[#E3FEF7]">
-								🎨 The Story Behind the Art
+								 The Story Behind the Art
 							</span>
 						</div>
 

@@ -9,6 +9,7 @@ export default function ProfilePage() {
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState("");
   const [activeTab, setActiveTab] = useState("overview");
+  
 
   useEffect(() => {
     const token = localStorage.getItem("token");
@@ -17,6 +18,7 @@ export default function ProfilePage() {
       return;
     }
 
+    
     async function fetchUser() {
       try {
         const res = await fetch("http://localhost:5000/api/users/me", {
@@ -65,12 +67,7 @@ export default function ProfilePage() {
     );
   }
 
-  const stats = [
-    { label: "Orders", value: "12", icon: <ShoppingBag className="w-4 h-4" />, color: "from-[#5C8374] to-[#77B0AA]" },
-    { label: "Wishlist", value: "8", icon: <Heart className="w-4 h-4" />, color: "from-[#77B0AA] to-[#9EC8B9]" },
-    { label: "Reviews", value: "4", icon: <Star className="w-4 h-4" />, color: "from-[#9EC8B9] to-[#E3FEF7]" },
-    { label: "Artworks", value: "24", icon: <Palette className="w-4 h-4" />, color: "from-[#135D66] to-[#003C43]" }
-  ];
+  
 
   return (
     <div className="min-h-screen bg-gradient-to-br from-[#092635] via-[#1B4242] to-[#003C43]">
@@ -174,18 +171,7 @@ export default function ProfilePage() {
                 </div>
               </div>
 
-              {/* Stats */}
-              <div className="grid grid-cols-2 gap-4">
-                {stats.map((stat, index) => (
-                  <div key={index} className="bg-gradient-to-b from-[#1B4242]/50 to-[#092635]/50 backdrop-blur-sm border border-[#5C8374]/30 rounded-xl p-4">
-                    <div className={`w-8 h-8 mb-2 rounded-lg bg-gradient-to-r ${stat.color} flex items-center justify-center`}>
-                      <div className="text-white">{stat.icon}</div>
-                    </div>
-                    <p className="text-2xl font-bold text-white">{stat.value}</p>
-                    <p className="text-sm text-[#77B0AA]">{stat.label}</p>
-                  </div>
-                ))}
-              </div>
+              
             </motion.div>
 
             {/* Right Column - Content */}
@@ -199,14 +185,14 @@ export default function ProfilePage() {
               <div className="bg-gradient-to-b from-[#1B4242]/80 to-[#092635]/80 backdrop-blur-sm border border-[#5C8374]/30 rounded-2xl p-6">
                 <div className="flex overflow-x-auto gap-2 pb-2 scrollbar-hide">
                   {[
-                    { id: "orders", label: "My Orders", icon: <Package className="w-4 h-4" /> },
-                    { id: "wishlist", label: "Wishlist", icon: <Heart className="w-4 h-4" /> },
-                    { id: "reviews", label: "Reviews", icon: <Star className="w-4 h-4" /> },
-                    { id: "settings", label: "Settings", icon: <Settings className="w-4 h-4" /> }
+                    { id: "orders", label: "My Orders", icon: <Package className="w-4 h-4" /> ,link: "/myorders"},
+                    { id: "wishlist", label: "Wishlist", icon: <Heart className="w-4 h-4" /> , link: "/wishlist"},
+                    { id: "reviews", label: "Reviews", icon: <Star className="w-4 h-4" /> , link: "/reviews"},
+                    { id: "settings", label: "Settings", icon: <Settings className="w-4 h-4" /> , link: "/editProfile"}
                   ].map((tab) => (
                     <button
                       key={tab.id}
-                      onClick={() => setActiveTab(tab.id)}
+                      onClick={() => navigate(tab.link)}
                       className={`flex items-center gap-2 px-4 py-3 rounded-lg whitespace-nowrap transition-all duration-200 ${
                         activeTab === tab.id
                           ? "bg-gradient-to-r from-[#5C8374] to-[#77B0AA] text-white"

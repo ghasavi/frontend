@@ -426,8 +426,10 @@ export default function AdminProductsPage() {
                           <div className="flex items-center gap-3">
                             <div className="relative">
                               <img
-                                src={product.images?.[0] || "/placeholder.png"}
-                                alt={product.name}
+  src={product.displayImage || product.images?.[0] || "/placeholder.png"}
+  alt={product.name}
+
+
                                 className="w-12 h-12 rounded-xl object-cover border border-[#5C8374]/20"
                               />
                               {product.stock === 0 && (
@@ -649,11 +651,12 @@ onClick={() => navigate(`/admin/edit-product/${product.productId}`)}
                         alt={`${selectedProduct.name} - ${index + 1}`}
                         className="w-full h-32 object-cover rounded-lg border border-[#5C8374]/20"
                       />
-                      {index === 0 && (
-                        <span className="absolute top-2 left-2 px-2 py-1 bg-[#5C8374] text-white text-xs rounded-full">
-                          Main
-                        </span>
-                      )}
+                      {image === selectedProduct.displayImage && (
+  <span className="absolute top-2 left-2 px-2 py-1 bg-[#5C8374] text-white text-xs rounded-full">
+    Main
+  </span>
+)}
+
                     </div>
                   ))}
                 </div>
@@ -740,7 +743,7 @@ onClick={() => navigate(`/admin/edit-product/${product.productId}`)}
                     whileHover={{ scale: 1.02 }}
                     whileTap={{ scale: 0.98 }}
                     onClick={() => {
-                      navigate("/admin/edit-product", { state: selectedProduct });
+navigate(`/admin/edit-product/${selectedProduct.productId}`);
                       setSelectedProduct(null);
                     }}
                     className="flex-1 py-3 bg-gradient-to-r from-[#2196F3] to-[#64B5F6] text-white font-bold rounded-lg hover:shadow-lg hover:shadow-[#2196F3]/30 transition-all duration-300 flex items-center justify-center gap-2"
