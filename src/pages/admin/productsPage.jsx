@@ -40,19 +40,29 @@ export default function AdminProductsPage() {
   const [sortBy, setSortBy] = useState("newest");
   const [categories, setCategories] = useState([]);
   const navigate = useNavigate();
+  const getDisplayImage = (product) => product.displayImage || product.images?.[0] || "/placeholder.png";
 
   // Fetch all products
   const fetchProducts = async () => {
     try {
       setIsLoading(true);
       const res = await api.get("/products");
-      const productsData = res.data || [];
-      setProducts(productsData);
+const productsData = (res.data || []).map(p => ({
+  ...p,
+  images: p.images?.length ? p.images : p.displayImage ? [p.displayImage] : ["/placeholder.png"],
+  displayImage: p.displayImage || (p.images?.[0] || "/placeholder.png"),
+}));
+
+
+setProducts(productsData);
+      
       
       // Extract unique categories
       const uniqueCategories = [...new Set(productsData.map(p => p.category).filter(Boolean))];
       setCategories(uniqueCategories);
-      
+
+      console.log("FETCHED PRODUCTS:", productsData);
+
       toast.success("Products loaded successfully! 📦");
     } catch (err) {
       console.error(err);
@@ -60,6 +70,7 @@ export default function AdminProductsPage() {
     } finally {
       setIsLoading(false);
     }
+
   };
 
   useEffect(() => {
@@ -425,13 +436,12 @@ export default function AdminProductsPage() {
                         <td className="p-4">
                           <div className="flex items-center gap-3">
                             <div className="relative">
-                              <img
-  src={product.displayImage || product.images?.[0] || "/placeholder.png"}
-  alt={product.name}
+                             <img
+  src={product.displayImage} // always guaranteed to exist
+  alt={product.name || "Product Image"}
+  className="w-12 h-12 rounded-xl object-cover border border-[#5C8374]/20"
+/>
 
-
-                                className="w-12 h-12 rounded-xl object-cover border border-[#5C8374]/20"
-                              />
                               {product.stock === 0 && (
                                 <div className="absolute -top-1 -right-1 w-5 h-5 bg-gradient-to-r from-[#F44336] to-[#EF9A9A] rounded-full flex items-center justify-center">
                                   <XCircle className="w-3 h-3 text-white" />
@@ -644,21 +654,27 @@ onClick={() => navigate(`/admin/edit-product/${product.productId}`)}
               <div className="p-6 space-y-6">
                 {/* Product images */}
                 <div className="grid grid-cols-2 md:grid-cols-3 gap-4">
-                  {selectedProduct.images?.map((image, index) => (
-                    <div key={index} className="relative group">
-                      <img
-                        src={image || "/placeholder.png"}
-                        alt={`${selectedProduct.name} - ${index + 1}`}
-                        className="w-full h-32 object-cover rounded-lg border border-[#5C8374]/20"
-                      />
-                      {image === selectedProduct.displayImage && (
-  <span className="absolute top-2 left-2 px-2 py-1 bg-[#5C8374] text-white text-xs rounded-full">
-    Main
-  </span>
+                {Array.isArray(selectedProduct.images) && selectedProduct.images.length > 0 ? (
+  selectedProduct.images.map((image, index) => (
+    <div key={index} className="relative group">
+      <img
+        src={image || "/placeholder.png"}
+        alt={`${selectedProduct.name || "Product"} - ${index + 1}`}
+        className="w-full h-32 object-cover rounded-lg border border-[#5C8374]/20"
+      />
+      {index === 0 && (
+        <span className="absolute top-2 left-2 px-2 py-1 bg-[#5C8374] text-white text-xs rounded-full">
+          Main
+        </span>
+      )}
+    </div>
+  ))
+) : (
+  <p>No gallery images available</p>
 )}
 
-                    </div>
-                  ))}
+
+
                 </div>
 
                 {/* Product info */}

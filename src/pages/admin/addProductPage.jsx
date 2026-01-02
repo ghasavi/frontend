@@ -66,30 +66,38 @@ export default function AddProductPage() {
   };
 
   const handleGalleryImagesChange = (e) => {
-    const files = Array.from(e.target.files);
-    setImages(files);
-    
-    const previews = [];
-    files.forEach(file => {
-      const reader = new FileReader();
-      reader.onloadend = () => {
-        previews.push(reader.result);
-        if (previews.length === files.length) {
-          setImagePreviews(previews);
-        }
-      };
-      reader.readAsDataURL(file);
-    });
-  };
+  const files = Array.from(e.target.files);
+  setImages(files);
+
+  Promise.all(
+    files.map(
+      (file) =>
+        new Promise((resolve, reject) => {
+          const reader = new FileReader();
+          reader.onload = () => resolve(reader.result);
+          reader.onerror = reject;
+          reader.readAsDataURL(file);
+        })
+    )
+  ).then((previews) => setImagePreviews(previews));
+};
+
 
   const removeGalleryImage = (index) => {
-    const newImages = [...images];
-    const newPreviews = [...imagePreviews];
-    newImages.splice(index, 1);
-    newPreviews.splice(index, 1);
-    setImages(newImages);
-    setImagePreviews(newPreviews);
-  };
+  const newImages = [...images];
+  const newPreviews = [...imagePreviews];
+  newImages.splice(index, 1);
+  newPreviews.splice(index, 1);
+  setImages(newImages);
+  setImagePreviews(newPreviews);
+
+  // Re-validate images
+  setErrors((p) => ({
+    ...p,
+    images: validateField("images", newImages),
+  }));
+};
+
 
   /* ===================== VALIDATION ===================== */
   function validateField(field, value, extra = {}) {
@@ -177,11 +185,13 @@ export default function AddProductPage() {
 
     setIsSubmitting(true);
     try {
-      // Upload images
-      const displayImageUrl = await mediaUpload(displayImage);
-      const imageUrls = await Promise.all(
-        images.map((img) => mediaUpload(img))
-      );
+
+      // Upload display image separately
+const displayImageUrl = await mediaUpload(displayImage);
+
+// Upload gallery images
+const galleryUrls = await Promise.all(images.map((img) => mediaUpload(img)));
+
 
       // Prepare product data
       const product = {
@@ -189,8 +199,8 @@ export default function AddProductPage() {
         name,
         altNames: altNames ? altNames.split(",").map((n) => n.trim()) : [],
         description,
+        images: galleryUrls,
         displayImage: displayImageUrl,
-        images: imageUrls,
         price: Number(price),
         labelledPrice: Number(labelledPrice),
         stock: Number(stock),
@@ -200,7 +210,19 @@ export default function AddProductPage() {
         year: Number(year),
       };
 
-      await api.post("/products", product);
+      console.log("FINAL PRODUCT DATA:", {
+  images: galleryUrls,
+  displayImage: displayImageUrl,
+});
+
+
+
+await api.post("/products", product, {
+  headers: {
+    Authorization: `Bearer ${token}`
+  }
+});
+
 
       toast.success("🎉 Product added successfully!");
       navigate("/admin/products");
