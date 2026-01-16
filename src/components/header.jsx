@@ -90,9 +90,11 @@ export default function Header() {
                 className="relative"
               >
                 <div className="absolute -inset-2 bg-gradient-to-r from-[#5C8374]/20 to-[#77B0AA]/20 rounded-full opacity-0 group-hover:opacity-100 transition-opacity duration-300 blur-sm"></div>
-                <div className="relative w-10 h-10 rounded-lg bg-gradient-to-r from-[#5C8374] to-[#77B0AA] flex items-center justify-center">
-                  <Sparkles className="w-5 h-5 text-white" />
-                </div>
+<div className="relative w-10 h-10 rounded-full overflow-hidden"><img 
+      src="/logo.png" 
+      alt="Pixaku Logo" 
+      className="w-full h-full object-contain" 
+    />                </div>
               </motion.div>
               <div className="flex flex-col">
                 <span className="text-2xl font-bold tracking-tight bg-gradient-to-r from-[#5C8374] to-[#77B0AA] bg-clip-text text-transparent">
