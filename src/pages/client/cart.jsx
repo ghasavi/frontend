@@ -2,6 +2,8 @@ import { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 import api from "../../utils/axios";
 import { motion, AnimatePresence } from "framer-motion";
+import { useContext } from "react";
+import { UserContext } from "../../context/UserContext";
 import { 
   ShoppingCart, 
   Plus, 
@@ -24,11 +26,12 @@ import toast from "react-hot-toast";
 
 export default function CartPage() {
   const navigate = useNavigate();
-  const [cart, setCart] = useState([]);
   const [selectedIds, setSelectedIds] = useState([]);
   const [loading, setLoading] = useState(true);
   const [updatingId, setUpdatingId] = useState(null);
   const [removingId, setRemovingId] = useState(null);
+
+  const { cart, setCart } = useContext(UserContext);
 
   /* ================= FETCH CART ================= */
   const fetchCart = async () => {

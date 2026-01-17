@@ -32,7 +32,7 @@ import { addToWishlist } from "../../utils/wishlist";
 export default function ProductOverviewPage() {
   const { id: productId } = useParams();
   const navigate = useNavigate();
-  const { user } = useContext(UserContext);
+const { user, cart, setCart } = useContext(UserContext);
 
   const wishlistKey = user?.email ? `wishlist_${user.email}` : null;
 
@@ -163,63 +163,59 @@ const prevImage = () => {
 
 
   /* ================= ADD TO CART ================= */
-  const handleAddToCart = async () => {
-    if (!user) {
-      toast.error("Please login to add items to cart 😤");
-      navigate("/login");
-      return;
-    }
-    
-    if (isOutOfStock) {
-      toast.error("Out of stock 😭");
-      return;
-    }
+ const handleAddToCart = async () => {
+  if (!user) {
+    toast.error("Please login first 😤");
+    navigate("/login");
+    return;
+  }
 
-    setAddingToCart(true);
-    
-    try {
-      const res = await api.get("/users/cart");
+  if (isOutOfStock) {
+    toast.error("Out of stock 😭");
+    return;
+  }
 
-      const currentCart = Array.isArray(res.data)
-        ? res.data
-        : Array.isArray(res.data?.cart)
-        ? res.data.cart
-        : [];
+  setAddingToCart(true);
 
-      const index = currentCart.findIndex(
-        (item) => item.productId === product.productId
+  try {
+    let updatedCart;
+    const index = cart.findIndex(
+      (item) => item.productId === product.productId
+    );
+
+    if (index === -1) {
+      updatedCart = [
+        ...cart,
+        {
+          productId: product.productId,
+          name: product.name,
+          image: product.displayImage || images[0] || "",
+          price,
+          labelledPrice,
+          qty: quantity,
+        },
+      ];
+    } else {
+      updatedCart = cart.map((item, i) =>
+        i === index ? { ...item, qty: item.qty + quantity } : item
       );
-
-      let updatedCart;
-
-      if (index === -1) {
-        updatedCart = [
-          ...currentCart,
-          {
-            productId: product.productId,
-            name: product.name,
-            image: product.displayImage || images[0] || "",
-            price,
-            labelledPrice,
-            qty: quantity,
-          },
-        ];
-      } else {
-        updatedCart = currentCart.map((item, i) =>
-          i === index ? { ...item, qty: item.qty + quantity } : item
-        );
-      }
-
-      await api.put("/users/cart", { cart: updatedCart });
-
-      toast.success(`Added ${quantity} item${quantity > 1 ? 's' : ''} to cart! 🛒`);
-    } catch (err) {
-      console.error("ADD TO CART ERROR:", err);
-      toast.error("Failed to add to cart 😭");
-    } finally {
-      setAddingToCart(false);
     }
-  };
+
+    // 🔥 UPDATE CONTEXT FIRST
+    setCart(updatedCart);
+
+    // 🔥 THEN SYNC BACKEND
+    await api.put("/users/cart", { cart: updatedCart });
+
+    toast.success("Added to cart 🛒");
+  } catch (err) {
+    console.error(err);
+    toast.error("Failed to add to cart 😭");
+  } finally {
+    setAddingToCart(false);
+  }
+};
+
 
   /* ================= ADD TO WISHLIST ================= */
   const handleAddToWishlist = () => {

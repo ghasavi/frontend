@@ -5,9 +5,17 @@ export const UserContext = createContext();
 
 export function UserProvider({ children }) {
   const [user, setUser] = useState(null);
-  const [cart, setCart] = useState([]); // <-- add this
+  const [cart, setCart] = useState(
+    JSON.parse(localStorage.getItem("cart")) || []
+  );
   const [token, setToken] = useState(localStorage.getItem("token") || "");
   const [loading, setLoading] = useState(true);
+
+  // Sync cart → localStorage
+  useEffect(() => {
+    localStorage.setItem("cart", JSON.stringify(cart));
+  }, [cart]);
+
 
   useEffect(() => {
     async function fetchUser() {
